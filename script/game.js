@@ -9,4 +9,5 @@ world = new World(canvas);
 
 console.log(world['character']);
 console.log(world['enemies']);
+console.log(world['backgroundObjekts']);
 }
