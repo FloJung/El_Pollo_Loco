@@ -6,6 +6,7 @@ class World {
     canvas;
     camera_x = 0;
     character = new Character();
+    statusbar = new StatusBar();
 
     level = level1;
 
@@ -31,10 +32,15 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.translate(this.camera_x,0);
-
+        
         this.addObjektToMap(this.level.backgroundObjekts);
         this.addToMap(this.character);
-        
+
+        this.ctx.translate(-this.camera_x,0);
+        // --------Space for fixed objects--------
+        this.addToMap(this.statusbar);
+        this.ctx.translate(this.camera_x,0);
+
         this.addObjektToMap(this.level.clouds);
         this.addObjektToMap(this.level.enemies);
 
@@ -84,7 +90,7 @@ class World {
             this.level.enemies.forEach((enemy) => {
                 if (this.character.isColliding(enemy)) {
                     this.character.hit();
-                    console.log(world.character.energy)
+                    this.statusbar.setPercentage(this.character.energy);
                 }
             });
         },200);
