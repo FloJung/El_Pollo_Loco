@@ -64,10 +64,8 @@ class Character extends MovableObject{
                         this.playAnimation(this.IMAGES_WARLKING);
                     }
                 }
-
-                
             },150);
-        
     }
 
+    
 }

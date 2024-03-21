@@ -16,7 +16,7 @@ class World {
         this.keyboard = keyboard;
         this.setWorld();
         this.draw();
-        
+        this.checkCollisions();
         
     }
 
@@ -38,6 +38,8 @@ class World {
         this.addObjektToMap(this.level.clouds);
         this.addObjektToMap(this.level.enemies);
 
+        
+
         this.ctx.translate(-this.camera_x,0);
         
         let self = this;
@@ -53,18 +55,37 @@ class World {
     }
 
     addToMap(mo) {
-        if (mo.otherDirection) {
-            this.ctx.save();
-            this.ctx.translate(mo.img.width/3, 0);
-            this.ctx.scale(-1,1);
-            mo.x = mo.x *-1;
+        if (mo.otherDirection ) {
+            this.flipImage(mo);
         }
 
-        this.ctx.drawImage(mo.img, mo.x, mo.y, mo.height, mo.width);
-
+        mo.draw(this.ctx);
+        mo.drawFrame(this.ctx);
+        
         if (mo.otherDirection) {
-            mo.x = mo.x *-1;
-            this.ctx.restore();
+            this.flipImageBack(mo);
         }
     }
+
+    flipImage(mo) {
+        this.ctx.save();
+        this.ctx.translate(mo.img.width/3, 0);
+        this.ctx.scale(-1,1);
+        mo.x = mo.x *-1;
+    }
+
+    flipImageBack(mo) {
+        mo.x = mo.x *-1;
+        this.ctx.restore();
+    }
+
+    checkCollisions() {
+        setInterval(() => {
+            this.level.enemies.forEach((enemy) => {
+                if (this.character.isColliding(enemy)) {
+                    
+                }
+            });
+        },100);
+    };
 }

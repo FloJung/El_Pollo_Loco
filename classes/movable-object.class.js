@@ -37,7 +37,19 @@ class MovableObject{
                 img.src = path;
                 this.imageCache[path] = img;  
             });
-        
+    }
+
+    draw(ctx) {
+        ctx.drawImage(this.img, this.x, this.y, this.height, this.width);
+    }
+    drawFrame(ctx) {
+        if(this instanceof Character || this instanceof Chicken || this instanceof Endboss) {
+            ctx.beginPath();
+            ctx.lineWidth = '3';
+            ctx.strokeStyle = 'blue';
+            ctx.rect(this.x,this.y,this.height, this.width);
+            ctx.stroke();
+        }
     }
 
     moveRight() {
@@ -56,5 +68,12 @@ class MovableObject{
 
     jump() {
         this.speedY = 30;
+    }
+
+    isColliding (mo) {
+        return  this.x + this.height > mo.x &&
+            this.y + this.width > mo.y &&
+            this.x < mo.x &&
+            this.y < mo.y + mo.width
     }
 }
