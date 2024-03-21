@@ -6,10 +6,6 @@ function init() {
 canvas = document.getElementById('canvas');
 world = new World(canvas, keyboard);
 
-
-console.log(world['character']);
-console.log(world['enemies']);
-console.log(world['backgroundObjekts']);
 }
 
 
@@ -29,7 +25,6 @@ window.addEventListener("keydown",(event) => {
     if(event.keyCode == 32) {
         keyboard.SPACE = true;
     }
-console.log(keyboard);
 });
 
 
@@ -49,5 +44,4 @@ window.addEventListener("keyup",(event) => {
     if(event.keyCode == 32) {
         keyboard.SPACE = false;
     }
-console.log(keyboard);
 });
