@@ -37,7 +37,7 @@ class StatusBar extends DrawableObject {
         this.loadImages(this.IMAGES_BOTTLE);
         this.loadImages(this.IMAGES_LIFE);
         this.loadImages(this.IMAGES_COIN);
-        this.x = 50;
+        this.x = 30;
         
         this.width = 230;
         this.height = 60;
@@ -47,17 +47,17 @@ class StatusBar extends DrawableObject {
     }
 
     drawAllStatusBars(ctx) {
-        // Zeichne Lebensanzeige
+        // Lebensanzeige
         let lifeImage = this.imageCache[this.IMAGES_LIFE[this.resolveImageIndex()]];
         this.drawSpecific(ctx, lifeImage, this.x, this.y, this.width, this.height);
     
-        // Zeichne Münzanzeige
+        // Münzanzeige
         let coinImage = this.imageCache[this.IMAGES_COIN[this.resolveImageIndex()]];
-        this.drawSpecific(ctx, coinImage, this.x, this.y + 60, this.width, this.height);
+        this.drawSpecific(ctx, coinImage, this.x, this.y + 45, this.width, this.height);
     
-        // Zeichne Flaschenanzeige
+        // Flaschenanzeige
         let bottleImage = this.imageCache[this.IMAGES_BOTTLE[this.resolveImageIndex()]];
-        this.drawSpecific(ctx, bottleImage, this.x, this.y + 120, this.width, this.height); 
+        this.drawSpecific(ctx, bottleImage, this.x, this.y + 90, this.width, this.height); 
     }
     
     
@@ -98,3 +98,4 @@ class StatusBar extends DrawableObject {
         }
     }
 }
+
