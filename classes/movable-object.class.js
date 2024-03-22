@@ -21,11 +21,6 @@ class MovableObject extends DrawableObject{
         return this.y < 140;
     }
 
-    
-
-    
-    
-
     moveRight() {
         this.x += this.speed;
     }

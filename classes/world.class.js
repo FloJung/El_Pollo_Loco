@@ -18,7 +18,7 @@ class World {
         this.setWorld();
         this.draw();
         this.checkCollisions();
-        
+        console.log(this.statusbar);
     }
 
 
@@ -38,7 +38,7 @@ class World {
 
         this.ctx.translate(-this.camera_x,0);
         // --------Space for fixed objects--------
-        this.addToMap(this.statusbar);
+        this.statusbar.drawAllStatusBars(this.ctx);
         this.ctx.translate(this.camera_x,0);
 
         this.addObjektToMap(this.level.clouds);
@@ -54,6 +54,7 @@ class World {
         });
     }
 
+    
     addObjektToMap(objekts) {
         objekts.forEach(o => {
             this.addToMap(o);
