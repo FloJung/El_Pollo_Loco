@@ -8,7 +8,7 @@ class World {
     character = new Character();
     statusbar = new StatusBar();
 
-    throwableObject = [];
+    throwableObject = new ThrowableObject();
 
     level = level1;
 
