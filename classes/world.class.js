@@ -7,7 +7,6 @@ class World {
     camera_x = 0;
     character = new Character();
     statusbar = new StatusBar();
-
     throwableObject = [];
 
     level = level1;
@@ -37,13 +36,16 @@ class World {
         
         this.addObjektToMap(this.level.backgroundObjekts);
         this.addToMap(this.character);
-
+        this.addObjektToMap(this.level.clouds);
+        this.addObjektToMap(this.level.coin);
+        this.addObjektToMap(this.level.bottle);
         this.ctx.translate(-this.camera_x,0);
         // --------Space for fixed objects--------
         this.statusbar.drawAllStatusBars(this.ctx);
+        this.statusbar.drawBOSSBAR(this.ctx);
         this.ctx.translate(this.camera_x,0);
 
-        this.addObjektToMap(this.level.clouds);
+
         this.addObjektToMap(this.level.enemies);
         this.addObjektToMap(this.throwableObject);
         

@@ -1,6 +1,7 @@
 class StatusBar extends DrawableObject {
 
-    IMAGES_LIFE = ['img/7_statusbars/1_statusbar/2_statusbar_health/green/0.png',
+    IMAGES_LIFE = [
+        'img/7_statusbars/1_statusbar/2_statusbar_health/green/0.png',
         'img/7_statusbars/1_statusbar/2_statusbar_health/green/20.png',
         'img/7_statusbars/1_statusbar/2_statusbar_health/green/40.png',
         'img/7_statusbars/1_statusbar/2_statusbar_health/green/60.png',
@@ -8,7 +9,8 @@ class StatusBar extends DrawableObject {
         'img/7_statusbars/1_statusbar/2_statusbar_health/green/100.png',
     ];
 
-    IMAGES_COIN = ['img/7_statusbars/1_statusbar/1_statusbar_coin/blue/0.png',
+    IMAGES_COIN = [
+        'img/7_statusbars/1_statusbar/1_statusbar_coin/blue/0.png',
         'img/7_statusbars/1_statusbar/1_statusbar_coin/blue/20.png',
         'img/7_statusbars/1_statusbar/1_statusbar_coin/blue/40.png',
         'img/7_statusbars/1_statusbar/1_statusbar_coin/blue/60.png',
@@ -16,12 +18,22 @@ class StatusBar extends DrawableObject {
         'img/7_statusbars/1_statusbar/1_statusbar_coin/blue/100.png',
     ];
 
-    IMAGES_BOTTLE = ['img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/0.png',
+    IMAGES_BOTTLE = [
+        'img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/0.png',
         'img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/20.png',
         'img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/40.png',
         'img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/60.png',
         'img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/80.png',
         'img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/100.png',
+    ];
+
+    IMAGES_BOSSBAR = [
+        'img/7_statusbars/2_statusbar_endboss/orange/orange0.png',
+        'img/7_statusbars/2_statusbar_endboss/orange/orange20.png',
+        'img/7_statusbars/2_statusbar_endboss/orange/orange40.png',
+        'img/7_statusbars/2_statusbar_endboss/orange/orange60.png',
+        'img/7_statusbars/2_statusbar_endboss/orange/orange80.png',
+        'img/7_statusbars/2_statusbar_endboss/orange/orange100.png',
     ];
 
     percentage = 100;
@@ -37,6 +49,7 @@ class StatusBar extends DrawableObject {
         this.loadImages(this.IMAGES_BOTTLE);
         this.loadImages(this.IMAGES_LIFE);
         this.loadImages(this.IMAGES_COIN);
+        this.loadImages(this.IMAGES_BOSSBAR);
         this.x = 30;
         
         this.width = 230;
@@ -44,6 +57,7 @@ class StatusBar extends DrawableObject {
         this.setPercentage(100);
         this.setCoinCounter(100);
         this.setBottleCounter(100);
+        this.setBossCounter(100);
     }
 
     drawAllStatusBars(ctx) {
@@ -60,6 +74,10 @@ class StatusBar extends DrawableObject {
         this.drawSpecific(ctx, bottleImage, this.x, this.y + 90, this.width, this.height); 
     }
     
+    drawBOSSBAR(ctx) {
+        let bossImage = this.imageCache[this.IMAGES_BOSSBAR[this.resolveImageIndex()]];
+        this.drawSpecific(ctx, bossImage, this.x + 390, this.y + 10, this.width + 50, this.height);
+    }
     
     setPercentage(percentage) {
         this.percentage = percentage;
@@ -80,6 +98,12 @@ class StatusBar extends DrawableObject {
         let path = this.IMAGES_BOTTLE[this.resolveImageIndex()];
         this.img = this.imageCache[path];
        
+    }
+
+    setBossCounter(percentage) {
+        this.percentage = percentage;
+        let path = this.IMAGES_BOSSBAR[this.resolveImageIndex()];
+        this.img = this.imageCache[path];
     }
 
     resolveImageIndex() {
