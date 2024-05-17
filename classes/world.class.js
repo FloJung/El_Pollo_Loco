@@ -104,12 +104,11 @@ class World {
                 this.statusbar.setPercentage(this.character.energy); 
             }
             if (this.character.isLandingOnTop(enemy)) {
-                
+                enemy.takeDamage(100);
                 
             }
         });
     }
-    
     
 
     checkThowObjects() {

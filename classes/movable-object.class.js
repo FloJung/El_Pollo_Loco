@@ -6,6 +6,10 @@ class MovableObject extends DrawableObject{
     energy = 100;
     lastHit = 0;
 
+    constructor() {
+        super();
+    }
+
     applyGravity() {
 
         setInterval(() =>{
@@ -13,7 +17,6 @@ class MovableObject extends DrawableObject{
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
             }
-            
         },1000/25)
     }
 
@@ -58,16 +61,6 @@ class MovableObject extends DrawableObject{
         const isVerticalOverlap = bottomOfThis >= topOfObject && bottomOfThis <= topOfObject + mo.width;
         const isHorizontalOverlap = this.x + this.height > mo.x && this.x < mo.x + mo.height;
     
-        // console.log({
-        //     'Char Bottom': bottomOfThis,
-        //     'Obj Top': topOfObject,
-        //     'Obj Bottom': topOfObject + mo.height,
-        //     'Falling': this.speedY < 0,
-        //     'SpeedY': this.speedY,
-        //     'Vertical Overlap': isVerticalOverlap,
-        //     'Horizontal Overlap': isHorizontalOverlap
-        // });
-    
         return this.speedY < 0 && isVerticalOverlap && isHorizontalOverlap;
     }
     
@@ -93,4 +86,10 @@ class MovableObject extends DrawableObject{
         return this.energy === 0;
     }
 
+    takeDamage(amount) {
+        this.energy -= amount;
+        if (this.energy <= 0) {
+            this.energy = 0;
+        }
+    }
 }
