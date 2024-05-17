@@ -100,11 +100,17 @@ class World {
     checkCollisions() {
         this.level.enemies.forEach((enemy) => {
             if (this.character.isColliding(enemy)) {
-                this.character.hit();
-                this.statusbar.setPercentage(this.character.energy);
+                this.character.hit(); 
+                this.statusbar.setPercentage(this.character.energy); 
+            }
+            if (this.character.isLandingOnTop(enemy)) {
+                
+                
             }
         });
     }
+    
+    
 
     checkThowObjects() {
         if (this.keyboard.THROW) {

@@ -50,6 +50,29 @@ class MovableObject extends DrawableObject{
             this.y < mo.y + mo.width
     }
 
+   
+    
+    isLandingOnTop(mo) {
+        const bottomOfThis = this.y + this.width;  // Untere Kante des Charakters
+        const topOfObject = mo.y;  
+        const isVerticalOverlap = bottomOfThis >= topOfObject && bottomOfThis <= topOfObject + mo.width;
+        const isHorizontalOverlap = this.x + this.height > mo.x && this.x < mo.x + mo.height;
+    
+        // console.log({
+        //     'Char Bottom': bottomOfThis,
+        //     'Obj Top': topOfObject,
+        //     'Obj Bottom': topOfObject + mo.height,
+        //     'Falling': this.speedY < 0,
+        //     'SpeedY': this.speedY,
+        //     'Vertical Overlap': isVerticalOverlap,
+        //     'Horizontal Overlap': isHorizontalOverlap
+        // });
+    
+        return this.speedY < 0 && isVerticalOverlap && isHorizontalOverlap;
+    }
+    
+    
+
     hit() {
         this.energy -= 5;
         if (this.energy <= 0) {
