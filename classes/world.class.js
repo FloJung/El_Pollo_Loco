@@ -98,10 +98,17 @@ class World {
     }
 
     checkCollisions() {
+        this.level.enemies = this.level.enemies.filter((enemy) => {
+            if (enemy.removed) {
+                console.log(`${enemy.constructor.name} removed from enemies array`);
+            }
+            return !enemy.removed;
+        }); 
+    
         this.level.enemies.forEach((enemy) => {
             if (this.character.isColliding(enemy)) {
-                this.character.hit(); 
-                this.statusbar.setPercentage(this.character.energy); 
+                this.character.hit();
+                this.statusbar.setPercentage(this.character.energy);
             }
             if (this.character.isLandingOnTop(enemy)) {
                 enemy.takeDamage(100);
@@ -109,6 +116,8 @@ class World {
             }
         });
     }
+    
+    
     
 
     checkThowObjects() {

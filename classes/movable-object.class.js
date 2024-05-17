@@ -5,6 +5,8 @@ class MovableObject extends DrawableObject{
     acceleration = 2.5;
     energy = 100;
     lastHit = 0;
+    dead = false; 
+    removed = false;
 
     constructor() {
         super();
@@ -69,13 +71,12 @@ class MovableObject extends DrawableObject{
     hit() {
         this.energy -= 5;
         if (this.energy <= 0) {
-            this.energy = 0; 
-        }else {
+            this.energy = 0;
+        } else {
             this.lastHit = new Date().getTime();
         }
     }
 
-    
     isHurt() {
         let timePassed = new Date().getTime() - this.lastHit;
         timePassed = timePassed / 1000;
@@ -90,6 +91,22 @@ class MovableObject extends DrawableObject{
         this.energy -= amount;
         if (this.energy <= 0) {
             this.energy = 0;
+            this.die();
         }
+    }
+
+    die() {
+        console.log(`${this.constructor.name} is dead!`);
+        this.dead = true;
+        setTimeout(() => {
+            this.removeFromWorld();
+        }, 1000);
+    }
+
+    removeFromWorld() {
+        console.log(`${this.constructor.name} is removed from world!`);
+        this.removed = true;
+        console.log(this.removed);
+
     }
 }
