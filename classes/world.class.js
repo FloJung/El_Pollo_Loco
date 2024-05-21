@@ -97,27 +97,53 @@ class World {
         },200);
     }
 
+    // checkCollisions() {
+    //     this.level.enemies = this.level.enemies.filter((enemy) => {
+    //         if (enemy.removed) {
+    //             console.log(`${enemy.constructor.name} removed from enemies array`);
+    //         }
+    //         return !enemy.removed;
+    //     }); 
+    
+    //     this.level.enemies.forEach((enemy) => {
+    //         if (this.character.isColliding(enemy)) {
+    //             this.character.hit();
+    //             this.statusbar.setPercentage(this.character.energy);
+    //         }
+    //         if (this.character.isLandingOnTop(enemy)) {
+    //             enemy.takeDamage(100);
+                
+    //         }
+    //     });
+    // }
+    
     checkCollisions() {
         this.level.enemies = this.level.enemies.filter((enemy) => {
             if (enemy.removed) {
                 console.log(`${enemy.constructor.name} removed from enemies array`);
             }
             return !enemy.removed;
-        }); 
-    
+        }); // Entferne entfernte Gegner
+
         this.level.enemies.forEach((enemy) => {
-            if (this.character.isColliding(enemy)) {
-                this.character.hit();
-                this.statusbar.setPercentage(this.character.energy);
-            }
-            if (this.character.isLandingOnTop(enemy)) {
-                enemy.takeDamage(100);
-                
+            if (enemy.isAlive()) {
+                if (this.character.isLandingOnTop(enemy)) {
+                    enemy.takeDamage(100);
+                    
+                } else if (this.character.isColliding(enemy)) {
+                    if (!this.character.invulnerable) {
+                        this.character.hit();
+                        this.statusbar.setPercentage(this.character.energy);
+                        this.character.invulnerable = true;
+                        setTimeout(() => {
+                            this.character.invulnerable = false;
+                        }, 1000); // 1 Sekunde Unverwundbarkeit
+                    }
+                }
             }
         });
     }
-    
-    
+
     
 
     checkThowObjects() {

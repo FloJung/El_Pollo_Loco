@@ -61,7 +61,7 @@ class MovableObject extends DrawableObject{
         const bottomOfThis = this.y + this.width;  // Untere Kante des Charakters
         const topOfObject = mo.y;  
         const isVerticalOverlap = bottomOfThis >= topOfObject && bottomOfThis <= topOfObject + mo.width;
-        const isHorizontalOverlap = this.x + this.height > mo.x && this.x < mo.x + mo.height;
+        const isHorizontalOverlap = this.x + this.height > mo.x && this.x < mo.x + mo.height + 40;
     
         return this.speedY < 0 && isVerticalOverlap && isHorizontalOverlap;
     }
@@ -69,11 +69,17 @@ class MovableObject extends DrawableObject{
     
 
     hit() {
-        this.energy -= 5;
-        if (this.energy <= 0) {
-            this.energy = 0;
-        } else {
-            this.lastHit = new Date().getTime();
+        if (!this.invulnerable) {
+            this.energy -= 5;
+            if (this.energy <= 0) {
+                this.energy = 0;
+            } else {
+                this.lastHit = new Date().getTime();
+                this.invulnerable = true;
+                setTimeout(() => {
+                    this.invulnerable = false;
+                }, 1000); // 1 Sekunde Unverwundbarkeit
+            }
         }
     }
 
@@ -85,6 +91,10 @@ class MovableObject extends DrawableObject{
 
     isDead() {
         return this.energy === 0;
+    }
+
+    isAlive() {
+        return !this.dead;
     }
 
     takeDamage(amount) {
