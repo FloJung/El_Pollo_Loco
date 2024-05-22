@@ -97,25 +97,6 @@ class World {
         },200);
     }
 
-    // checkCollisions() {
-    //     this.level.enemies = this.level.enemies.filter((enemy) => {
-    //         if (enemy.removed) {
-    //             console.log(`${enemy.constructor.name} removed from enemies array`);
-    //         }
-    //         return !enemy.removed;
-    //     }); 
-    
-    //     this.level.enemies.forEach((enemy) => {
-    //         if (this.character.isColliding(enemy)) {
-    //             this.character.hit();
-    //             this.statusbar.setPercentage(this.character.energy);
-    //         }
-    //         if (this.character.isLandingOnTop(enemy)) {
-    //             enemy.takeDamage(100);
-                
-    //         }
-    //     });
-    // }
     
     checkCollisions() {
         this.level.enemies = this.level.enemies.filter((enemy) => {
@@ -135,16 +116,41 @@ class World {
                         this.character.hit();
                         this.statusbar.setPercentage(this.character.energy);
                         this.character.invulnerable = true;
-                        setTimeout(() => {
-                            this.character.invulnerable = false;
-                        }, 1000); // 1 Sekunde Unverwundbarkeit
+                        // setTimeout(() => {
+                        //     this.character.invulnerable = false;
+                        // }, 1000); // 1 Sekunde Unverwundbarkeit
                     }
                 }
+            }
+        });
+
+        this.level.bottle.forEach((bottle) => {
+            if (this.character.isColliding(bottle)) {
+                this.collectBottle(bottle);
+            }
+        });
+
+        this.level.coin.forEach((coin) => {
+            if (this.character.isColliding(coin)) {
+                this.collectCoin(coin);
             }
         });
     }
 
     
+    collectBottle(bottle) {
+        console.log('Collected a bottle!');
+        bottle.removeFromWorld();
+        this.level.bottle = this.level.bottle.filter(b => !b.removed);
+        // Logik zum Erhöhen des Flaschenzählers
+    }
+
+    collectCoin(coin) {
+        console.log('Collected a coin!');
+        coin.removeFromWorld();
+        this.level.coin = this.level.coin.filter(c => !c.removed);
+        // Logik zum Erhöhen des Münzenzählers
+    }
 
     checkThowObjects() {
         if (this.keyboard.THROW) {

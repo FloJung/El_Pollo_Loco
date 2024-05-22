@@ -26,7 +26,7 @@ class MovableObject extends DrawableObject{
         if (this instanceof ThrowableObject) {
             return true;
         }else {
-            return this.y < 140;
+            return this.y < 240;
         }  
     }
 
@@ -58,7 +58,7 @@ class MovableObject extends DrawableObject{
    
     
     isLandingOnTop(mo) {
-        const bottomOfThis = this.y + this.width;  // Untere Kante des Charakters
+        const bottomOfThis = this.y + this.width;  
         const topOfObject = mo.y;  
         const isVerticalOverlap = bottomOfThis >= topOfObject && bottomOfThis <= topOfObject + mo.width;
         const isHorizontalOverlap = this.x + this.height > mo.x && this.x < mo.x + mo.height + 40;
@@ -78,7 +78,7 @@ class MovableObject extends DrawableObject{
                 this.invulnerable = true;
                 setTimeout(() => {
                     this.invulnerable = false;
-                }, 1000); // 1 Sekunde Unverwundbarkeit
+                }, 100); // 1 Sekunde Unverwundbarkeit
             }
         }
     }

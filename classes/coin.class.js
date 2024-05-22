@@ -1,7 +1,7 @@
-class Coin extends StatusBar{
+class Coin extends MovableObject {
     
-    width = 200;
-    height = 200;
+    width = 60;
+    height = 60;
 
     constructor() {
         super().loadImage('img/8_coin/coin_1.png');

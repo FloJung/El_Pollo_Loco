@@ -1,8 +1,8 @@
 class Character extends MovableObject {
-    height = 200;
-    width = 300;
+    height = 140;
+    width = 200;
     speed = 5;
-    y = 140;
+    y = 240;
     invulnerable = false;
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
@@ -63,7 +63,7 @@ class Character extends MovableObject {
                 this.moveLeft();
                 this.walkingAudio.play();
             }
-            if (this.world.keyboard.UP && this.y == 140) {
+            if (this.world.keyboard.UP && this.y == 240) {
                 this.jump();
             }
             this.world.camera_x = -this.x + 100;

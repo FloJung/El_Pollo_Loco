@@ -1,7 +1,7 @@
-class Bottle extends StatusBar{
+class Bottle extends MovableObject {
     
-    width = 100;
-    height = 150;
+    width = 90;
+    height = 30;
 
     constructor() {
         super().loadImage('img/6_salsa_bottle/salsa_bottle.png');
