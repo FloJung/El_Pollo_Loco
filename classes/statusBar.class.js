@@ -37,8 +37,9 @@ class StatusBar extends DrawableObject {
     ];
 
     percentage = 100;
-    coins = 100;
-    bottles = 100;
+    bossLife = 100;
+    coins = 0;
+    bottles = 0;
     x = 30;
     y = 0;
     width = 600;
@@ -55,71 +56,81 @@ class StatusBar extends DrawableObject {
         this.width = 230;
         this.height = 60;
         this.setPercentage(100);
-        this.setCoinCounter(100);
-        this.setBottleCounter(100);
+        this.setCoinCounter(0); 
+        this.setBottleCounter(0); 
         this.setBossCounter(100);
     }
 
     drawAllStatusBars(ctx) {
         // Lebensanzeige
-        let lifeImage = this.imageCache[this.IMAGES_LIFE[this.resolveImageIndex()]];
+        let lifeImage = this.imageCache[this.IMAGES_LIFE[this.resolveImageIndex(this.percentage)]];
         this.drawSpecific(ctx, lifeImage, this.x, this.y, this.width, this.height);
     
         // Münzanzeige
-        let coinImage = this.imageCache[this.IMAGES_COIN[this.resolveImageIndex()]];
+        let coinImage = this.imageCache[this.IMAGES_COIN[this.resolveImageIndex(this.coins)]];
         this.drawSpecific(ctx, coinImage, this.x, this.y + 45, this.width, this.height);
     
         // Flaschenanzeige
-        let bottleImage = this.imageCache[this.IMAGES_BOTTLE[this.resolveImageIndex()]];
+        let bottleImage = this.imageCache[this.IMAGES_BOTTLE[this.resolveImageIndex(this.bottles)]];
         this.drawSpecific(ctx, bottleImage, this.x, this.y + 90, this.width, this.height); 
     }
     
+    setBossLife(bossLife) {
+        this.bossLife = bossLife;
+        let path = this.IMAGES_BOSSBAR[this.resolveImageIndex(bossLife)];
+        this.img = this.imageCache[path];
+    }
+
     drawBOSSBAR(ctx) {
-        let bossImage = this.imageCache[this.IMAGES_BOSSBAR[this.resolveImageIndex()]];
+        let bossImage = this.imageCache[this.IMAGES_BOSSBAR[this.resolveImageIndex(this.bossLife)]];
         this.drawSpecific(ctx, bossImage, this.x + 390, this.y + 10, this.width + 50, this.height);
     }
     
     setPercentage(percentage) {
         this.percentage = percentage;
-        let path = this.IMAGES_LIFE[this.resolveImageIndex()];
+        let path = this.IMAGES_LIFE[this.resolveImageIndex(percentage)];
         this.img = this.imageCache[path];
-        
     }
     
-    setCoinCounter(percentage) {
-        this.percentage = percentage;
-        let path = this.IMAGES_COIN[this.resolveImageIndex()];
+    setCoinCounter(coins) {
+        this.coins = coins;
+        let path = this.IMAGES_COIN[this.resolveImageIndex(coins)];
         this.img = this.imageCache[path];
-        
     }
     
-    setBottleCounter(percentage) {
-        this.percentage = percentage;
-        let path = this.IMAGES_BOTTLE[this.resolveImageIndex()];
+    setBottleCounter(bottles) {
+        this.bottles = bottles;
+        let path = this.IMAGES_BOTTLE[this.resolveImageIndex(bottles)];
         this.img = this.imageCache[path];
-       
     }
 
     setBossCounter(percentage) {
         this.percentage = percentage;
-        let path = this.IMAGES_BOSSBAR[this.resolveImageIndex()];
+        let path = this.IMAGES_BOSSBAR[this.resolveImageIndex(percentage)];
         this.img = this.imageCache[path];
     }
 
-    resolveImageIndex() {
-        if (this.percentage == 100) {
+    resolveImageIndex(value) {
+        if (value >= 100) {
             return 5;
-        } else if (this.percentage > 80) {
+        } else if (value > 80) {
             return 4;
-        } else if (this.percentage > 60) {
+        } else if (value > 60) {
             return 3;
-        } else if (this.percentage > 40) {
+        } else if (value > 40) {
             return 2;
-        } else if (this.percentage > 20) {
+        } else if (value > 20) {
             return 1;
         } else {
             return 0;
         }
     }
-}
 
+    increaseCoins() {
+        this.setCoinCounter(this.coins + 20);
+    }
+
+    increaseBottles() {
+        this.setBottleCounter(this.bottles + 20);
+    }
+}

@@ -78,7 +78,7 @@ class MovableObject extends DrawableObject{
                 this.invulnerable = true;
                 setTimeout(() => {
                     this.invulnerable = false;
-                }, 100); // 1 Sekunde Unverwundbarkeit
+                }, 100); // 10ms Unverwundbarkeit
             }
         }
     }

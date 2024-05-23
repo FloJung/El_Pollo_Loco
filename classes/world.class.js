@@ -12,10 +12,10 @@ class World {
     level = level1;
 
     constructor(canvas, keyboard) {
-        
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+
         this.setWorld();
         this.draw();
         this.run();
@@ -47,6 +47,7 @@ class World {
 
 
         this.addObjektToMap(this.level.enemies);
+        this.addObjektToMap(this.level.boss);
         this.addObjektToMap(this.throwableObject);
         
 
@@ -80,7 +81,7 @@ class World {
 
     flipImage(mo) {
         this.ctx.save();
-        this.ctx.translate(mo.img.width/3, 0);
+        this.ctx.translate(mo.img.width/4, 0);
         this.ctx.scale(-1,1);
         mo.x = mo.x *-1;
     }
@@ -104,7 +105,7 @@ class World {
                 console.log(`${enemy.constructor.name} removed from enemies array`);
             }
             return !enemy.removed;
-        }); // Entferne entfernte Gegner
+        }); // Entferne Gegner
 
         this.level.enemies.forEach((enemy) => {
             if (enemy.isAlive()) {
@@ -115,14 +116,23 @@ class World {
                     if (!this.character.invulnerable) {
                         this.character.hit();
                         this.statusbar.setPercentage(this.character.energy);
-                        this.character.invulnerable = true;
-                        // setTimeout(() => {
-                        //     this.character.invulnerable = false;
-                        // }, 1000); // 1 Sekunde Unverwundbarkeit
+                        
                     }
                 }
             }
         });
+
+        this.level.boss.forEach((boss) => {
+            if (boss.isAlive()) {
+                if (this.character.isColliding(boss)) {
+                    if (!this.character.invulnerable) {
+                        this.character.hit();
+                        this.statusbar.setPercentage(this.character.energy);  
+                    }
+                }
+            }
+        });
+
 
         this.level.bottle.forEach((bottle) => {
             if (this.character.isColliding(bottle)) {
@@ -142,19 +152,19 @@ class World {
         console.log('Collected a bottle!');
         bottle.removeFromWorld();
         this.level.bottle = this.level.bottle.filter(b => !b.removed);
-        // Logik zum Erhöhen des Flaschenzählers
+        this.statusbar.increaseBottles(); // Statusleiste aktualisieren
     }
 
     collectCoin(coin) {
         console.log('Collected a coin!');
         coin.removeFromWorld();
         this.level.coin = this.level.coin.filter(c => !c.removed);
-        // Logik zum Erhöhen des Münzenzählers
+        this.statusbar.increaseCoins(); // Statusleiste aktualisieren
     }
 
     checkThowObjects() {
         if (this.keyboard.THROW) {
-            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100) 
+            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50) 
             this.throwableObject.push(bottle);
         }
     }

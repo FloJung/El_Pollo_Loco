@@ -4,7 +4,7 @@ class Endboss extends MovableObject {
     y = -30;
     speed = 20;
     isAttacking = false;
-    isMovingBack = false; // Neuer Zustand, der das Rückwärtslaufen überwacht
+    isMovingBack = false;
     originalX = 700 * 2.5;
 
     IMAGES_ALERT = [
@@ -36,8 +36,9 @@ class Endboss extends MovableObject {
         'img/4_enemie_boss_chicken/1_walk/G4.png',
     ];
 
-    constructor() {
+    constructor(statusBar) {
         super();
+        this.statusBar = statusBar;
         this.loadImage(this.IMAGES_ALERT[0]);
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_ATTACK);
@@ -48,41 +49,41 @@ class Endboss extends MovableObject {
     }
 
     moveForward() {
-        this.x -= 200;  // Bewegt den Boss um 150px vorwärts
+        this.x -= 200;
     }
 
     moveRight() {
-        this.isMovingBack = true;  // Beginnt mit der Rückwärtsbewegung
+        this.isMovingBack = true;
         let moveInterval = setInterval(() => {
             if (this.x < this.originalX) {
                 this.x += this.speed;
                 this.playAnimation(this.IMAGES_WALK);
             } else {
                 clearInterval(moveInterval);
-                this.isMovingBack = false;  // Beendet die Rückwärtsbewegung
-                this.playAnimation(this.IMAGES_ALERT);  // Kehrt zurück zur Alert-Animation
+                this.isMovingBack = false;
+                this.playAnimation(this.IMAGES_ALERT);
             }
         }, 200);
     }
 
     attack() {
         setInterval(() => {
-            if (!this.isAttacking && !this.isMovingBack) {  // Verhindert Angriffe während der Rückwärtsbewegung
+            if (!this.isAttacking && !this.isMovingBack) {
                 this.isAttacking = true;
                 let index = 0;
                 const interval = setInterval(() => {
-                    if (index === 5) { 
+                    if (index === 5) {
                         this.moveForward();
                     }
                     if (index >= this.IMAGES_ATTACK.length) {
                         clearInterval(interval);
                         this.isAttacking = false;
-                        this.moveRight();  // Beginnt mit der Rückwärtsbewegung
+                        this.moveRight();
                     } else {
                         this.loadImage(this.IMAGES_ATTACK[index]);
                         index++;
                     }
-                }, 200); 
+                }, 200);
             }
         }, Math.random() * (7000 - 1000) + 1000);
     }
