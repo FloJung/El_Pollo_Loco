@@ -8,7 +8,8 @@ class World {
     character = new Character();
     statusbar = new StatusBar();
     throwableObject = [];
-
+    collectedBottles = 0;
+    maxBottles = 100;
     level = level1;
 
     constructor(canvas, keyboard) {
@@ -62,8 +63,10 @@ class World {
     
     addObjektToMap(objekts) {
         objekts.forEach(o => {
-            this.addToMap(o);
-    });
+            if (!o.removed) { 
+                this.addToMap(o);
+            }
+        });
     }
 
     addToMap(mo) {
@@ -95,6 +98,7 @@ class World {
         setInterval(() => {
             this.checkThowObjects();
            this.checkCollisions();
+           this.checkBottleCollisions();
         },200);
     }
 
@@ -145,13 +149,29 @@ class World {
                 this.collectCoin(coin);
             }
         });
+        this.checkBottleCollisions();
     }
 
-    
+    checkBottleCollisions() {
+        this.throwableObject.forEach((bottle) => {
+            this.level.boss.forEach((boss) => {
+                if (bottle.isColliding(boss)) {
+                    boss.takeDamage(20);
+                    this.statusbar.setBossCounter(boss.energy);
+                    bottle.removeFromWorld();
+                    console.log('Boss hit by bottle!');
+                }
+            });
+        });
+        // Entferne alle kollidierten Flaschen
+        this.throwableObject = this.throwableObject.filter(bottle => !bottle.removed);
+    }
+
     collectBottle(bottle) {
         console.log('Collected a bottle!');
         bottle.removeFromWorld();
         this.level.bottle = this.level.bottle.filter(b => !b.removed);
+        this.collectedBottles++; // Anzahl der gesammelten Flaschen erhöhen
         this.statusbar.increaseBottles(); // Statusleiste aktualisieren
     }
 
@@ -163,9 +183,12 @@ class World {
     }
 
     checkThowObjects() {
-        if (this.keyboard.THROW) {
-            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50) 
+        if (this.keyboard.THROW && this.collectedBottles > 0) {
+            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
             this.throwableObject.push(bottle);
+            this.collectedBottles--; // Anzahl der verfügbaren Flaschen verringern
+            console.log(this.collectedBottles);
+            this.statusbar.setBottleCounter(this.collectedBottles * 10); // Statusleiste aktualisieren
         }
     }
 }

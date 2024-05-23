@@ -44,6 +44,7 @@ class StatusBar extends DrawableObject {
     y = 0;
     width = 600;
     height = 330;
+    maxBottles = 100;
 
     constructor() {
         super();
@@ -75,11 +76,6 @@ class StatusBar extends DrawableObject {
         this.drawSpecific(ctx, bottleImage, this.x, this.y + 90, this.width, this.height); 
     }
     
-    setBossLife(bossLife) {
-        this.bossLife = bossLife;
-        let path = this.IMAGES_BOSSBAR[this.resolveImageIndex(bossLife)];
-        this.img = this.imageCache[path];
-    }
 
     drawBOSSBAR(ctx) {
         let bossImage = this.imageCache[this.IMAGES_BOSSBAR[this.resolveImageIndex(this.bossLife)]];
@@ -104,9 +100,9 @@ class StatusBar extends DrawableObject {
         this.img = this.imageCache[path];
     }
 
-    setBossCounter(percentage) {
-        this.percentage = percentage;
-        let path = this.IMAGES_BOSSBAR[this.resolveImageIndex(percentage)];
+    setBossCounter(bossLife) {
+        this.bossLife = bossLife;
+        let path = this.IMAGES_BOSSBAR[this.resolveImageIndex(bossLife)];
         this.img = this.imageCache[path];
     }
 

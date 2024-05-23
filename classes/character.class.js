@@ -72,16 +72,30 @@ class Character extends MovableObject {
         setInterval(() => {
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
+                this.die();
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
             } else if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);
-                
             } else {
                 if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                     this.playAnimation(this.IMAGES_WALKING);
                 }
             }
         }, 150);
+    }
+
+    die() {
+        this.energy = 0;
+        this.isDying = true;
+        this.speedY = 20; // Sprung nach oben
+        this.applyGravity();
+
+        const deathInterval = setInterval(() => {
+            if (this.y >= 240) { // Wieder am Boden
+                clearInterval(deathInterval);
+                this.removeFromWorld();
+            }
+        }, 1000 / 60);
     }
 }

@@ -5,7 +5,11 @@ class Endboss extends MovableObject {
     speed = 20;
     isAttacking = false;
     isMovingBack = false;
+    isDying = false; // Zustand für das Sterben
     originalX = 700 * 2.5;
+    attackInterval;
+    animateInterval;
+    moveInterval; // Hinzugefügt: Intervall für die Bewegung
 
     IMAGES_ALERT = [
         'img/4_enemie_boss_chicken/2_alert/G5.png',
@@ -36,16 +40,35 @@ class Endboss extends MovableObject {
         'img/4_enemie_boss_chicken/1_walk/G4.png',
     ];
 
-    constructor(statusBar) {
+    IMAGES_DEAD = [
+        'img/4_enemie_boss_chicken/5_dead/G24.png',
+        'img/4_enemie_boss_chicken/5_dead/G25.png',
+        'img/4_enemie_boss_chicken/5_dead/G26.png',
+    ];
+
+    constructor() {
         super();
-        this.statusBar = statusBar;
         this.loadImage(this.IMAGES_ALERT[0]);
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_ATTACK);
         this.loadImages(this.IMAGES_WALK);
+        this.loadImages(this.IMAGES_DEAD);
         this.x = this.originalX;
+        this.energy = 100;
         this.animate();
         this.attack();
+    }
+
+    takeDamage(amount) {
+        this.energy -= amount;
+        if (this.energy <= 0) {
+            this.energy = 0;
+            this.die();
+        }
+    }
+
+    isAlive() {
+        return this.energy > 0;
     }
 
     moveForward() {
@@ -54,25 +77,27 @@ class Endboss extends MovableObject {
 
     moveRight() {
         this.isMovingBack = true;
-        let moveInterval = setInterval(() => {
+        this.moveInterval = setInterval(() => {
             if (this.x < this.originalX) {
                 this.x += this.speed;
                 this.playAnimation(this.IMAGES_WALK);
             } else {
-                clearInterval(moveInterval);
+                clearInterval(this.moveInterval);
                 this.isMovingBack = false;
-                this.playAnimation(this.IMAGES_ALERT);
+                if (!this.isDying) {
+                    this.playAnimation(this.IMAGES_ALERT);
+                }
             }
         }, 200);
     }
 
     attack() {
-        setInterval(() => {
-            if (!this.isAttacking && !this.isMovingBack) {
+        this.attackInterval = setInterval(() => {
+            if (!this.isAttacking && !this.isMovingBack && !this.isDying) { 
                 this.isAttacking = true;
                 let index = 0;
                 const interval = setInterval(() => {
-                    if (index === 5) {
+                    if (index === 5) { 
                         this.moveForward();
                     }
                     if (index >= this.IMAGES_ATTACK.length) {
@@ -83,16 +108,35 @@ class Endboss extends MovableObject {
                         this.loadImage(this.IMAGES_ATTACK[index]);
                         index++;
                     }
-                }, 200);
+                }, 400); 
             }
         }, Math.random() * (7000 - 1000) + 1000);
     }
 
     animate() {
-        setInterval(() => {
-            if (!this.isAttacking && !this.isMovingBack) {
+        this.animateInterval = setInterval(() => {
+            if (!this.isAttacking && !this.isMovingBack && !this.isDying) {
                 this.playAnimation(this.IMAGES_ALERT);
             }
         }, 150);
+    }
+
+    die() {
+        this.isDying = true;
+        clearInterval(this.attackInterval);
+        clearInterval(this.animateInterval);
+        clearInterval(this.moveInterval); 
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index >= this.IMAGES_DEAD.length) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    this.removeFromWorld();
+                }, 2000);
+            } else {
+                this.loadImage(this.IMAGES_DEAD[index]);
+                index++;
+            }
+        }, 200); 
     }
 }

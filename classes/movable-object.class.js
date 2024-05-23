@@ -7,27 +7,42 @@ class MovableObject extends DrawableObject{
     lastHit = 0;
     dead = false; 
     removed = false;
+    isDying = false;
 
     constructor() {
         super();
     }
 
-    applyGravity() {
+    hit() {
+        if (!this.invulnerable) {
+            this.energy -= 5;
+            if (this.energy <= 0) {
+                this.energy = 0;
+            } else {
+                this.lastHit = new Date().getTime();
+                this.invulnerable = true;
+                setTimeout(() => {
+                    this.invulnerable = false;
+                }, 100); // 10ms Unverwundbarkeit
+            }
+        }
+    }
 
-        setInterval(() =>{
-            if (this.isAboveGround() || this.speedY > 0) {
+    applyGravity() {
+        setInterval(() => {
+            if (this.isAboveGround() || this.speedY > 0 || this.isDying) { // Wenn der Charakter stirbt, wird die Schwerkraft angewendet
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
             }
-        },1000/25)
+        }, 1000 / 25);
     }
 
     isAboveGround() {
         if (this instanceof ThrowableObject) {
             return true;
-        }else {
+        } else {
             return this.y < 240;
-        }  
+        }
     }
 
     moveRight() {
@@ -117,6 +132,6 @@ class MovableObject extends DrawableObject{
         console.log(`${this.constructor.name} is removed from world!`);
         this.removed = true;
         console.log(this.removed);
-
     }
+
 }
