@@ -7,6 +7,7 @@ class World {
     camera_x = 0;
     character = new Character();
     statusbar = new StatusBar();
+    gameOverlay = new GameOverlay();
     throwableObject = [];
     collectedBottles = 0;
     maxBottles = 100;
@@ -28,6 +29,11 @@ class World {
 
     setWorld() {
         this.character.world = this;
+    }
+
+    drawEndScreen() {
+        this.gameOverlay.loadImage(this.gameOverlay.IMAGE_OVER[0]);
+        this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
     }
 
     draw() {
