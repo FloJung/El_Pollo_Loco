@@ -37,9 +37,9 @@ class DrawableObject {
             ctx.stroke();
         }
     }
-    // 
+    
     drawSpecific(ctx, img, x, y, width, height) {
         ctx.drawImage(img, x, y, width, height);
     }
-    // 
+     
 }

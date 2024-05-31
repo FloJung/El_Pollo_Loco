@@ -1,6 +1,4 @@
 class World {
-    
-    
     ctx;
     keyboard;
     canvas;
@@ -12,6 +10,8 @@ class World {
     collectedBottles = 0;
     maxBottles = 100;
     level = level1;
+    gameOver = false;
+    gameStarted = false; 
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -19,16 +19,38 @@ class World {
         this.keyboard = keyboard;
 
         this.setWorld();
-        this.draw();
-        this.run();
+        this.drawStartScreen(); 
+        this.initEventListeners();
         console.log(this.statusbar);
     }
 
-
-   
-
     setWorld() {
         this.character.world = this;
+        this.gameOverlay.world = this;
+    }
+
+    drawStartScreen() {
+        console.log('Start');
+        console.log(this.gameOverlay.loadImage(this.gameOverlay.IMAGE_START[0]));
+        this.gameOverlay.loadImage(this.gameOverlay.IMAGE_START[0]);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    initEventListeners() {
+        window.addEventListener('keydown', (event) => {
+            if (event.keyCode === 32) { 
+                this.startGame();
+            }
+        });
+    }
+
+    startGame() {
+        if (!this.gameStarted) {
+            this.gameStarted = true;
+            this.draw();
+            this.run();
+        }
     }
 
     drawEndScreen() {
@@ -37,52 +59,56 @@ class World {
     }
 
     draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if (this.gameOver) {
+            this.drawEndScreen();
+        } else if (!this.gameStarted) {
+            this.drawStartScreen();
+            
+        } else {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.ctx.translate(this.camera_x,0);
-        
-        this.addObjektToMap(this.level.backgroundObjekts);
-        this.addToMap(this.character);
-        this.addObjektToMap(this.level.clouds);
-        this.addObjektToMap(this.level.coin);
-        this.addObjektToMap(this.level.bottle);
-        this.ctx.translate(-this.camera_x,0);
-        // --------Space for fixed objects--------
-        this.statusbar.drawAllStatusBars(this.ctx);
-        this.statusbar.drawBOSSBAR(this.ctx);
-        this.ctx.translate(this.camera_x,0);
+            this.ctx.translate(this.camera_x, 0);
 
+            this.addObjektToMap(this.level.backgroundObjekts);
+            this.addToMap(this.character);
+            this.addObjektToMap(this.level.clouds);
+            this.addObjektToMap(this.level.coin);
+            this.addObjektToMap(this.level.bottle);
+            this.ctx.translate(-this.camera_x, 0);
+            // --------Space for fixed objects--------
+            this.statusbar.drawAllStatusBars(this.ctx);
+            this.statusbar.drawBOSSBAR(this.ctx);
+            this.ctx.translate(this.camera_x, 0);
 
-        this.addObjektToMap(this.level.enemies);
-        this.addObjektToMap(this.level.boss);
-        this.addObjektToMap(this.throwableObject);
-        
+            this.addObjektToMap(this.level.enemies);
+            this.addObjektToMap(this.level.boss);
+            this.addObjektToMap(this.throwableObject);
 
-        this.ctx.translate(-this.camera_x,0);
-        
-        let self = this;
-        requestAnimationFrame(function() {
-            self.draw();
-        });
+            this.ctx.translate(-this.camera_x, 0);
+
+            let self = this;
+            requestAnimationFrame(function () {
+                self.draw();
+            });
+        }
     }
 
-    
     addObjektToMap(objekts) {
         objekts.forEach(o => {
-            if (!o.removed) { 
+            if (!o.removed) {
                 this.addToMap(o);
             }
         });
     }
 
     addToMap(mo) {
-        if (mo.otherDirection ) {
+        if (mo.otherDirection) {
             this.flipImage(mo);
         }
 
         mo.draw(this.ctx);
         mo.drawFrame(this.ctx);
-        
+
         if (mo.otherDirection) {
             this.flipImageBack(mo);
         }
@@ -90,25 +116,26 @@ class World {
 
     flipImage(mo) {
         this.ctx.save();
-        this.ctx.translate(mo.img.width/4, 0);
-        this.ctx.scale(-1,1);
-        mo.x = mo.x *-1;
+        this.ctx.translate(mo.img.width / 4, 0);
+        this.ctx.scale(-1, 1);
+        mo.x = mo.x * -1;
     }
 
     flipImageBack(mo) {
-        mo.x = mo.x *-1;
+        mo.x = mo.x * -1;
         this.ctx.restore();
     }
 
     run() {
         setInterval(() => {
-            this.checkThowObjects();
-           this.checkCollisions();
-           this.checkBottleCollisions();
-        },200);
+            if (this.gameStarted) {
+                this.checkThowObjects();
+                this.checkCollisions();
+                this.checkBottleCollisions();
+            }
+        }, 200);
     }
 
-    
     checkCollisions() {
         this.level.enemies = this.level.enemies.filter((enemy) => {
             if (enemy.removed) {
@@ -121,12 +148,11 @@ class World {
             if (enemy.isAlive()) {
                 if (this.character.isLandingOnTop(enemy)) {
                     enemy.takeDamage(100);
-                    
+
                 } else if (this.character.isColliding(enemy)) {
                     if (!this.character.invulnerable) {
                         this.character.hit();
                         this.statusbar.setPercentage(this.character.energy);
-                        
                     }
                 }
             }
@@ -137,12 +163,11 @@ class World {
                 if (this.character.isColliding(boss)) {
                     if (!this.character.invulnerable) {
                         this.character.hit();
-                        this.statusbar.setPercentage(this.character.energy);  
+                        this.statusbar.setPercentage(this.character.energy);
                     }
                 }
             }
         });
-
 
         this.level.bottle.forEach((bottle) => {
             if (this.character.isColliding(bottle)) {
@@ -169,32 +194,38 @@ class World {
                 }
             });
         });
-        // Entferne alle kollidierten Flaschen
+        // Entferne Flaschen
         this.throwableObject = this.throwableObject.filter(bottle => !bottle.removed);
     }
 
     collectBottle(bottle) {
-        console.log('Collected a bottle!');
-        bottle.removeFromWorld();
-        this.level.bottle = this.level.bottle.filter(b => !b.removed);
-        this.collectedBottles++; // Anzahl der gesammelten Flaschen erhöhen
-        this.statusbar.increaseBottles(); // Statusleiste aktualisieren
+        if (this.collectedBottles < this.maxBottles) {
+            console.log('Collected a bottle!');
+            bottle.removeFromWorld();
+            this.level.bottle = this.level.bottle.filter(b => !b.removed);
+            this.collectedBottles++; 
+            this.statusbar.increaseBottles();
+        }
     }
 
     collectCoin(coin) {
         console.log('Collected a coin!');
         coin.removeFromWorld();
         this.level.coin = this.level.coin.filter(c => !c.removed);
-        this.statusbar.increaseCoins(); // Statusleiste aktualisieren
+        this.statusbar.increaseCoins();
     }
 
     checkThowObjects() {
         if (this.keyboard.THROW && this.collectedBottles > 0) {
             let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
             this.throwableObject.push(bottle);
-            this.collectedBottles--; // Anzahl der verfügbaren Flaschen verringern
+            this.collectedBottles--; 
             console.log(this.collectedBottles);
-            this.statusbar.setBottleCounter(this.collectedBottles * 10); // Statusleiste aktualisieren
+            this.statusbar.setBottleCounter(this.collectedBottles * 10); 
         }
+    }
+
+    endGame() {
+        this.gameOver = true;
     }
 }

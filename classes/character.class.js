@@ -88,19 +88,15 @@ class Character extends MovableObject {
     die() {
         this.energy = 0;
         this.isDying = true;
-        this.speedY = 30; // Sprung nach oben
+        this.speedY = 30;
         this.applyGravity();
 
         const deathInterval = setInterval(() => {
-            if (this.y >= 240) { // Wieder am Boden
+            if (this.y >= 240) {
                 clearInterval(deathInterval);
-                this.showEndscreen();
+                this.world.endGame();
                 this.removeFromWorld();
             }
         }, 1000 / 60);
-    }
-
-    showEndscreen() {
-        this.world.gameOverlay.loadImage(this.world.gameOverlay.IMAGE_OVER[0]);
     }
 }

@@ -9,7 +9,7 @@ class GameOverlay extends DrawableObject {
 
     constructor() {
         super();
-        this.loadImages(this.IMAGE_START);
+        this.loadImage(this.IMAGE_START[0]);
         this.loadImages(this.IMAGE_OVER);
     }
 

@@ -30,7 +30,7 @@ class MovableObject extends DrawableObject{
 
     applyGravity() {
         setInterval(() => {
-            if (this.isAboveGround() || this.speedY > 0 || this.isDying) { // Wenn der Charakter stirbt, wird die Schwerkraft angewendet
+            if (this.isAboveGround() || this.speedY > 0 || this.isDying) { 
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
             }
