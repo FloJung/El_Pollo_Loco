@@ -3,8 +3,177 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-image: url('img/bg/desert.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 90vh;
 }
 
-canvas {
+h1 {
+    font-family: 'zabars', Arial, Helvetica, sans-serif;
+    font-size: 64px;
+    letter-spacing: 5px;
+    text-shadow: -5px 5px 5px #dfa63ba7;
+}
+
+.description {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 10px;
+    width: 720px;
+}
+
+span {
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+
+
+
+/* ----------- */
+
+/* Grundlegende Stile für alle Buttons */
+.btn {
+    display: inline-block;
+    padding: 15px 20px;
+    margin: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff; /* Blau, kannst du nach Belieben anpassen */
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px #0056b3;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+/* Effekt beim Drüberfahren */
+.btn:hover {
+    background-color: #0056b3;
+}
+
+/* Effekt beim Klicken */
+.btn:active {
+    background-color: #003f7f;
+    transform: translateY(4px);
+    box-shadow: 0 2px #002a5a;
+}
+
+/* Spezifische Stile für verschiedene Buttons */
+#startGame {
+    background-color: #28a745; /* Grün für Start */
+    box-shadow: 0 4px #1e7e34;
+}
+
+#startGame:hover {
+    background-color: #218838;
+}
+
+#startGame:active {
+    background-color: #1c7430;
+    box-shadow: 0 2px #155724;
+}
+
+#muteGame {
+    background-color: #dc3545; /* Rot für Mute */
+    box-shadow: 0 4px #b21f2d;
+}
+
+#muteGame:hover {
+    background-color: #c82333;
+}
+
+#muteGame:active {
+    background-color: #a71d2a;
+    box-shadow: 0 2px #7f1a1d;
+}
+
+/* Stile für Bewegungstasten */
+#moveLeft, #moveRight, #jump, #throw {
+    background-color: #ffc107; /* Gelb für Bewegungen */
+    box-shadow: 0 4px #d39e00;
+}
+
+#moveLeft:hover, #moveRight:hover, #jump:hover, #throw:hover {
+    background-color: #e0a800;
+}
+
+#moveLeft:active, #moveRight:active, #jump:active, #throw:active {
+    background-color: #c69500;
+    box-shadow: 0 2px #9a7a00;
+}
+
+/* Spezifische Stile für Pfeiltasten */
+#moveLeft, #moveRight {
+    width: 60px;
+}
+
+#jump, #throw {
+    width: 60px;
+}
+
+#throw {
+    padding: 10px 5px;
+}
+
+.playPanel {
+    position: absolute;
+    z-index: 2;
+}
+
+.hud {
+    position: relative;
+}
+
+.movePanel {
+    
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 20px;
+}
+
+.movePanel > div {
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.position {
+    width: 100%;
+    position: absolute;
+    bottom: 10px;
+}
+
+
+/* ------------ */
+
+img {
+    width: 10px;
+}
+
+canvas { 
     background-color: black;
+}
+
+@font-face {
+    font-family: 'zabars';
+    src: url('font/zabars.ttf');
+}
+
+@media only screen and (max-width: 720px) {
+    canvas {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-height: 480px) {
+    canvas {
+        height: 100hv;
+    }
 }

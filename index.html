@@ -34,12 +34,43 @@
 
     <body onload="init()">
         <h1>El Pollo Loco</h1>
-        <canvas id="canvas" width="720px" height="480px"></canvas>
-        <div id="gameStart">
-            <button id="start">Start</button>
-            <button id="restart">Restart</button>
+
+        <div class="hud">
+            <div class="playPanel">
+                <div>
+                    <button class="btn" id="startGame">Play</button>
+                    <button class="btn" id="muteGame">Mute</button>
+                </div>
+            </div>
+            <div >
+                <canvas id="canvas" width="720px" height="480px"></canvas>
+            </div>
+            <div class="position">
+                <div class="movePanel ">
+                
+                    <div>
+                        <button class="btn" id="moveLeft"><</button>
+                        <button class="btn" id="moveRight">></button>
+                    </div>
+                    <div>
+                        <button class="btn" id="jump">^</button>
+                        <button class="btn" id="throw"><img src="img/6_salsa_bottle/salsa_bottle.png"></button>
+                    </div>
+             
+                
+            </div>
+            </div>
+            
         </div>
         
+        
+        <div class="description">
+             <span>Start game with Space</span>
+        <span>Move with Arrowkey</span>
+        <span>Throw with D</span>
+        </div>
+       
+
     </body>
 
 </html>

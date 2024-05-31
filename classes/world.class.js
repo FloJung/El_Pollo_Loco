@@ -3,13 +3,13 @@ class World {
     keyboard;
     canvas;
     camera_x = 0;
-    character = new Character();
+   
     statusbar = new StatusBar();
     gameOverlay = new GameOverlay();
     throwableObject = [];
     collectedBottles = 0;
     maxBottles = 100;
-    level = level1;
+    level;
     gameOver = false;
     gameStarted = false; 
 
@@ -25,7 +25,9 @@ class World {
     }
 
     setWorld() {
-        this.character.world = this;
+        if (this.character) {
+            this.character.world = this;
+        }
         this.gameOverlay.world = this;
     }
 
@@ -48,6 +50,10 @@ class World {
     startGame() {
         if (!this.gameStarted) {
             this.gameStarted = true;
+            initLevel(); 
+            this.level = level1;
+            this.character = new Character();
+            this.setWorld();
             this.draw();
             this.run();
         }
