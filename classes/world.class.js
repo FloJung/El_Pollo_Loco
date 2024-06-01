@@ -47,6 +47,21 @@ class World {
         });
     }
 
+    reset() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.keyboard = new Keyboard();
+        this.character = null;
+        this.statusbar = new StatusBar();
+        this.gameOverlay = new GameOverlay();
+        this.throwableObject = [];
+        this.collectedBottles = 0;
+        this.maxBottles = 100;
+        this.level = null;
+        this.gameOver = false;
+        this.gameStarted = false;
+        this.camera_x = 0;
+    }
+
     startGame() {
         if (!this.gameStarted) {
             this.gameStarted = true;

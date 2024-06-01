@@ -7,7 +7,9 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    height: 90vh;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
@@ -29,11 +31,6 @@ span {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
 }
-
-
-
-
-/* ----------- */
 
 /* Grundlegende Stile für alle Buttons */
 .btn {
@@ -123,7 +120,11 @@ span {
 
 .playPanel {
     position: absolute;
+    top: -5px;
+    right: 20px;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
 }
 
 .hud {
@@ -131,14 +132,12 @@ span {
 }
 
 .movePanel {
-    
     display: flex;
     justify-content: space-between;
     padding: 5px 20px;
 }
 
 .movePanel > div {
-    
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -150,15 +149,13 @@ span {
     bottom: 10px;
 }
 
-
-/* ------------ */
-
 img {
     width: 10px;
 }
 
-canvas { 
+canvas {
     background-color: black;
+    display: block;
 }
 
 @font-face {
@@ -166,14 +163,76 @@ canvas {
     src: url('font/zabars.ttf');
 }
 
+
+
+/* Responsive Styles */
 @media only screen and (max-width: 720px) {
     canvas {
         width: 100%;
+    }
+    
+    .btn {
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 720px) {
+    .movePanel {
+        display: none;
+    }
+}
+
+@media only screen and (max-height: 720px) {
+    .btn {
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 720px) {
+    h1 {
+        display: none;
+    }
+
+    span {
+        display: none;
+    }
+
+    .description {
+        display: none;
+    }
+
+    body {
+        background: none;
+    }
+}
+
+@media (max-height: 720px) {
+    h1 {
+        display: none;
+    }
+
+    span {
+        display: none;
+    }
+
+    .description {
+        display: none;
+    }
+
+    body {
+        background: none;
     }
 }
 
 @media only screen and (max-height: 480px) {
     canvas {
-        height: 100hv;
+        height: 100vh;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 14px;
     }
 }

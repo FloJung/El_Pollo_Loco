@@ -79,7 +79,7 @@ class StatusBar extends DrawableObject {
 
     drawBOSSBAR(ctx) {
         let bossImage = this.imageCache[this.IMAGES_BOSSBAR[this.resolveImageIndex(this.bossLife)]];
-        this.drawSpecific(ctx, bossImage, this.x + 390, this.y + 10, this.width + 50, this.height);
+        this.drawSpecific(ctx, bossImage, this.x + 390, this.y + 50, this.width + 50, this.height);
     }
     
     setPercentage(percentage) {
