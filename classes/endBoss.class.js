@@ -132,6 +132,7 @@ class Endboss extends MovableObject {
                 clearInterval(interval);
                 setTimeout(() => {
                     this.removeFromWorld();
+                    
                 }, 2000);
             } else {
                 this.loadImage(this.IMAGES_DEAD[index]);

@@ -3,7 +3,6 @@ class World {
     keyboard;
     canvas;
     camera_x = 0;
-   
     statusbar = new StatusBar();
     gameOverlay = new GameOverlay();
     throwableObject = [];
@@ -11,7 +10,9 @@ class World {
     maxBottles = 100;
     level;
     gameOver = false;
-    gameStarted = false; 
+    gameWin = false;
+    gameStarted = false;
+    score = 0;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -19,9 +20,10 @@ class World {
         this.keyboard = keyboard;
 
         this.setWorld();
-        this.drawStartScreen(); 
+        this.drawStartScreen();
         this.initEventListeners();
         console.log(this.statusbar);
+        this.updateScore();
     }
 
     setWorld() {
@@ -41,7 +43,7 @@ class World {
 
     initEventListeners() {
         window.addEventListener('keydown', (event) => {
-            if (event.keyCode === 32) { 
+            if (event.keyCode === 32) {
                 this.startGame();
             }
         });
@@ -60,17 +62,20 @@ class World {
         this.gameOver = false;
         this.gameStarted = false;
         this.camera_x = 0;
+        this.score = 0;
+        this.gameWin = false;
     }
 
     startGame() {
         if (!this.gameStarted) {
             this.gameStarted = true;
-            initLevel(); 
+            initLevel();
             this.level = level1;
             this.character = new Character();
             this.setWorld();
             this.draw();
             this.run();
+            document.getElementById('scoreDisplay').classList.add("scoreOut");
         }
     }
 
@@ -80,18 +85,20 @@ class World {
     }
 
     draw() {
-        if (this.gameOver) {
+        if (this.gameWin || this.gameOver) {
             this.drawEndScreen();
+            return;
         } else if (!this.gameStarted) {
             this.drawStartScreen();
-            
         } else {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
             this.ctx.translate(this.camera_x, 0);
 
             this.addObjektToMap(this.level.backgroundObjekts);
-            this.addToMap(this.character);
+            if (this.character) {
+                this.addToMap(this.character);
+            }
             this.addObjektToMap(this.level.clouds);
             this.addObjektToMap(this.level.coin);
             this.addObjektToMap(this.level.bottle);
@@ -148,8 +155,8 @@ class World {
     }
 
     run() {
-        setInterval(() => {
-            if (this.gameStarted) {
+        this.runInterval = setInterval(() => {
+            if (this.gameStarted && !this.gameOver && !this.gameWin) {
                 this.checkThowObjects();
                 this.checkCollisions();
                 this.checkBottleCollisions();
@@ -158,6 +165,8 @@ class World {
     }
 
     checkCollisions() {
+        if (this.gameWin || this.gameOver) return;  // Keine weiteren Kollisionen prüfen, wenn das Spiel gewonnen oder verloren ist
+
         this.level.enemies = this.level.enemies.filter((enemy) => {
             if (enemy.removed) {
                 console.log(`${enemy.constructor.name} removed from enemies array`);
@@ -169,7 +178,8 @@ class World {
             if (enemy.isAlive()) {
                 if (this.character.isLandingOnTop(enemy)) {
                     enemy.takeDamage(100);
-
+                    this.score += 50; // Increment score by 50 for each enemy
+                    this.updateScore();
                 } else if (this.character.isColliding(enemy)) {
                     if (!this.character.invulnerable) {
                         this.character.hit();
@@ -187,6 +197,12 @@ class World {
                         this.statusbar.setPercentage(this.character.energy);
                     }
                 }
+            } else if (this.score < 500) {
+                setTimeout(() => {
+                    this.updateScore();
+                    this.score += 500;
+                    this.winGame();
+                }, 500);
             }
         });
 
@@ -205,6 +221,8 @@ class World {
     }
 
     checkBottleCollisions() {
+        if (this.gameWin || this.gameOver) return;  // Keine weiteren Kollisionen prüfen, wenn das Spiel gewonnen oder verloren ist
+
         this.throwableObject.forEach((bottle) => {
             this.level.boss.forEach((boss) => {
                 if (bottle.isColliding(boss)) {
@@ -224,7 +242,7 @@ class World {
             console.log('Collected a bottle!');
             bottle.removeFromWorld();
             this.level.bottle = this.level.bottle.filter(b => !b.removed);
-            this.collectedBottles++; 
+            this.collectedBottles++;
             this.statusbar.increaseBottles();
         }
     }
@@ -234,19 +252,36 @@ class World {
         coin.removeFromWorld();
         this.level.coin = this.level.coin.filter(c => !c.removed);
         this.statusbar.increaseCoins();
+        this.score += 10; // Increment score by 10 for each coin
+        this.updateScore();
     }
 
     checkThowObjects() {
+        if (this.gameWin || this.gameOver) return;  // Keine weiteren Aktionen ausführen, wenn das Spiel gewonnen oder verloren ist
+
         if (this.keyboard.THROW && this.collectedBottles > 0) {
             let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
             this.throwableObject.push(bottle);
-            this.collectedBottles--; 
+            this.collectedBottles--;
             console.log(this.collectedBottles);
-            this.statusbar.setBottleCounter(this.collectedBottles * 10); 
+            this.statusbar.setBottleCounter(this.collectedBottles * 10);
         }
+    }
+
+    updateScore() {
+        document.getElementById('yourScore').innerText = this.score;
     }
 
     endGame() {
         this.gameOver = true;
+        this.character = null;  // Entferne den Charakter
+    }
+
+    winGame() {
+        this.updateScore();
+        console.log('Game Over. Final Score:', this.score);
+        document.getElementById('scoreDisplay').classList.remove("scoreOut");
+        this.gameWin = true;
+        this.character = null;  // Entferne den Charakter
     }
 }
