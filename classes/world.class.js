@@ -12,7 +12,13 @@ class World {
     gameOver = false;
     gameWin = false;
     gameStarted = false;
-    score = 0;
+    score = 0; 
+    
+    throwAudio = new Audio('audio/throwNew.mp3');
+    coinAudio = new Audio('audio/coin.mp3');
+    collectBottleAudio = new Audio('audio/collect.mp3');
+
+    
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -21,9 +27,16 @@ class World {
 
         this.setWorld();
         this.drawStartScreen();
-        this.initEventListeners();
+        
         console.log(this.statusbar);
         this.updateScore();
+    }
+
+    initAudio() {
+         audioButton = document.getElementById('muteGame');
+        if (audioButton) {
+            toggleAudio();
+        }
     }
 
     setWorld() {
@@ -31,6 +44,7 @@ class World {
             this.character.world = this;
         }
         this.gameOverlay.world = this;
+        
     }
 
     drawStartScreen() {
@@ -41,13 +55,9 @@ class World {
         this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
     }
 
-    initEventListeners() {
-        window.addEventListener('keydown', (event) => {
-            if (event.keyCode === 32) {
-                this.startGame();
-            }
-        });
-    }
+   
+
+    
 
     reset() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -64,6 +74,7 @@ class World {
         this.camera_x = 0;
         this.score = 0;
         this.gameWin = false;
+       
     }
 
     startGame() {
@@ -75,6 +86,7 @@ class World {
             this.setWorld();
             this.draw();
             this.run();
+            
             document.getElementById('scoreDisplay').classList.add("scoreOut");
         }
     }
@@ -84,13 +96,26 @@ class World {
         this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
     }
 
+    drawRESETScreen() {
+        this.gameOverlay.loadImage(this.gameOverlay.IMAGE_RESET[0]);
+        this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
+        document.getElementById('scoreDisplay').classList.remove("scoreOut");
+        document.getElementById('startGame').classList.remove("scoreOut");
+    }
+
     draw() {
-        if (this.gameWin || this.gameOver) {
+        if (this.gameWin) {
+            document.getElementById('scoreDisplay').classList.remove("scoreOut");
+            document.getElementById('startGame').classList.remove("scoreOut");
+        } else if (this.gameOver) {
             this.drawEndScreen();
-            return;
+            setTimeout(() => {
+                this.drawRESETScreen();
+            }, 2000);
         } else if (!this.gameStarted) {
             this.drawStartScreen();
         } else {
+            document.getElementById('startGame').classList.add("scoreOut");
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
             this.ctx.translate(this.camera_x, 0);
@@ -165,20 +190,20 @@ class World {
     }
 
     checkCollisions() {
-        if (this.gameWin || this.gameOver) return;  // Keine weiteren Kollisionen prüfen, wenn das Spiel gewonnen oder verloren ist
+        if (this.gameWin || this.gameOver) return;
 
         this.level.enemies = this.level.enemies.filter((enemy) => {
             if (enemy.removed) {
                 console.log(`${enemy.constructor.name} removed from enemies array`);
             }
             return !enemy.removed;
-        }); // Entferne Gegner
+        });
 
         this.level.enemies.forEach((enemy) => {
             if (enemy.isAlive()) {
                 if (this.character.isLandingOnTop(enemy)) {
                     enemy.takeDamage(100);
-                    this.score += 50; // Increment score by 50 for each enemy
+                    this.score += 50;
                     this.updateScore();
                 } else if (this.character.isColliding(enemy)) {
                     if (!this.character.invulnerable) {
@@ -221,7 +246,7 @@ class World {
     }
 
     checkBottleCollisions() {
-        if (this.gameWin || this.gameOver) return;  // Keine weiteren Kollisionen prüfen, wenn das Spiel gewonnen oder verloren ist
+        if (this.gameWin || this.gameOver) return;
 
         this.throwableObject.forEach((bottle) => {
             this.level.boss.forEach((boss) => {
@@ -233,7 +258,7 @@ class World {
                 }
             });
         });
-        // Entferne Flaschen
+
         this.throwableObject = this.throwableObject.filter(bottle => !bottle.removed);
     }
 
@@ -244,20 +269,21 @@ class World {
             this.level.bottle = this.level.bottle.filter(b => !b.removed);
             this.collectedBottles++;
             this.statusbar.increaseBottles();
+            this.collectBottleAudio.play();
         }
     }
 
     collectCoin(coin) {
-        console.log('Collected a coin!');
         coin.removeFromWorld();
         this.level.coin = this.level.coin.filter(c => !c.removed);
         this.statusbar.increaseCoins();
-        this.score += 10; // Increment score by 10 for each coin
+        this.score += 10;
         this.updateScore();
+        this.coinAudio.play();
     }
 
     checkThowObjects() {
-        if (this.gameWin || this.gameOver) return;  // Keine weiteren Aktionen ausführen, wenn das Spiel gewonnen oder verloren ist
+        if (this.gameWin || this.gameOver) return;
 
         if (this.keyboard.THROW && this.collectedBottles > 0) {
             let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
@@ -265,6 +291,7 @@ class World {
             this.collectedBottles--;
             console.log(this.collectedBottles);
             this.statusbar.setBottleCounter(this.collectedBottles * 10);
+            this.throwAudio.play();
         }
     }
 
@@ -274,7 +301,7 @@ class World {
 
     endGame() {
         this.gameOver = true;
-        this.character = null;  // Entferne den Charakter
+        this.character = null;
     }
 
     winGame() {
@@ -282,6 +309,6 @@ class World {
         console.log('Game Over. Final Score:', this.score);
         document.getElementById('scoreDisplay').classList.remove("scoreOut");
         this.gameWin = true;
-        this.character = null;  // Entferne den Charakter
+        this.character = null;
     }
 }

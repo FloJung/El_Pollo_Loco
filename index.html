@@ -29,7 +29,7 @@
         <div class="playPanel">
             <div>
                 <button class="btn" id="startGame">Play</button>
-                <button class="btn" id="muteGame">Mute</button>
+                <button class="btn" id="muteGame" onclick="world.toggleAudio()">Mute</button>
             </div>
         </div>
         
@@ -37,8 +37,7 @@
             <div class="score scoreOut" id="scoreDisplay">
                 <h2 class="scoreHeadline">Your Score:</h2>
                 <p id="yourScore">0</p>
-                <!-- <h2 class="scoreHeadline">High Score:</h2>
-                <p id="highScore">0</p> -->
+                
             </div>
             
         <div class="position">
@@ -46,6 +45,8 @@
                 <div>
                     <button class="btn" id="moveLeft"><</button>
                     <button class="btn" id="moveRight">></button>
+                    
+
                 </div>
                 <div>
                     <button class="btn" id="jump">^</button>
@@ -55,7 +56,7 @@
         </div>
     </div>
     <div class="description">
-        <span>Start game with Space</span>
+        
         <span>Move with Arrowkey</span>
         <span>Throw with D</span>
     </div>
