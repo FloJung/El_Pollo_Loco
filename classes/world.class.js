@@ -5,6 +5,8 @@ class World {
     camera_x = 0;
     statusbar = new StatusBar();
     gameOverlay = new GameOverlay();
+    chicken = new Chicken();
+
     throwableObject = [];
     collectedBottles = 0;
     maxBottles = 100;
@@ -13,38 +15,48 @@ class World {
     gameWin = false;
     gameStarted = false;
     score = 0; 
-    
+    isMuted = false;
+
     throwAudio = new Audio('audio/throwNew.mp3');
     coinAudio = new Audio('audio/coin.mp3');
     collectBottleAudio = new Audio('audio/collect.mp3');
-
+    winAudio = new Audio('audio/win.mp3');
+    loseAudio = new Audio('audio/lose.mp3');
     
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
-
+        
         this.setWorld();
         this.drawStartScreen();
         
         console.log(this.statusbar);
         this.updateScore();
+        this.winAudio.volume = 0.2;
     }
 
-    initAudio() {
-         audioButton = document.getElementById('muteGame');
-        if (audioButton) {
-            toggleAudio();
+
+    toggleMute() {
+        this.isMuted = !this.isMuted;
+        let mute = document.getElementById('muteGame');
+        if(!this.isMuted) {
+            mute.innerHTML = 'Mute';
+        } else {
+            mute.innerHTML = 'Unmute';
         }
+        
     }
+    
+    
 
     setWorld() {
         if (this.character) {
             this.character.world = this;
         }
+       
         this.gameOverlay.world = this;
-        
     }
 
     drawStartScreen() {
@@ -83,16 +95,24 @@ class World {
             initLevel();
             this.level = level1;
             this.character = new Character();
+            this.level.enemies.forEach(enemy => {
+                if (enemy instanceof Chicken) {
+                    enemy.world = this;
+                }});
+            this.level.boss.forEach(boss => {
+                if (boss instanceof Endboss) {
+                    boss.world = this;
+                }
+            });
             this.setWorld();
             this.draw();
             this.run();
-            
             document.getElementById('scoreDisplay').classList.add("scoreOut");
         }
     }
 
     drawEndScreen() {
-        this.gameOverlay.loadImage(this.gameOverlay.IMAGE_OVER[0]);
+        this.gameOverlay.loadImage(this.gameOverlay.IMAGE_OVER[0||1]);
         this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
     }
 
@@ -185,6 +205,7 @@ class World {
                 this.checkThowObjects();
                 this.checkCollisions();
                 this.checkBottleCollisions();
+                this.checkForGameOverCondition();
             }
         }, 200);
     }
@@ -269,7 +290,9 @@ class World {
             this.level.bottle = this.level.bottle.filter(b => !b.removed);
             this.collectedBottles++;
             this.statusbar.increaseBottles();
-            this.collectBottleAudio.play();
+            if(!this.isMuted) {
+                this.collectBottleAudio.play();
+            }
         }
     }
 
@@ -279,7 +302,10 @@ class World {
         this.statusbar.increaseCoins();
         this.score += 10;
         this.updateScore();
-        this.coinAudio.play();
+        if(!this.isMuted) {
+            this.coinAudio.play();
+        }
+        
     }
 
     checkThowObjects() {
@@ -291,7 +317,10 @@ class World {
             this.collectedBottles--;
             console.log(this.collectedBottles);
             this.statusbar.setBottleCounter(this.collectedBottles * 10);
-            this.throwAudio.play();
+            if(!this.isMuted) {
+                this.throwAudio.play();
+            }
+            
         }
     }
 
@@ -309,6 +338,18 @@ class World {
         console.log('Game Over. Final Score:', this.score);
         document.getElementById('scoreDisplay').classList.remove("scoreOut");
         this.gameWin = true;
+        if(!this.isMuted) {
+            this.winAudio.play();
+        }
         this.character = null;
+    }
+
+    checkForGameOverCondition() {
+        if (this.level.bottle.length === 0 && this.collectedBottles === 0) {
+            setTimeout(() => {
+                this.character.die();
+            }, 2000);
+             
+        }
     }
 }

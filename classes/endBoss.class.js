@@ -7,9 +7,8 @@ class Endboss extends MovableObject {
     isMovingBack = false;
     isDying = false;
     originalX = 700 * 2.5;
-    attackInterval;
-    animateInterval;
-    moveInterval;
+    hadFirstContact = false;
+
     walkAudio = new Audio('audio/walking.mp3');
     wingsAudio = new Audio('audio/flappingWings.mp3');
 
@@ -87,7 +86,10 @@ class Endboss extends MovableObject {
                 this.playAnimation(this.IMAGES_WALK);
                 if (this.walkAudio.paused) {
                     this.walkAudio.loop = true;
-                    this.walkAudio.play();
+                    if(!this.world.isMuted) {
+                         this.walkAudio.play();
+                    }
+                   
                 }
             } else {
                 clearInterval(this.moveInterval);
@@ -103,11 +105,13 @@ class Endboss extends MovableObject {
 
     attack() {
         this.attackInterval = setInterval(() => {
-            if (!this.isAttacking && !this.isMovingBack && !this.isDying) {
+            if (this.hadFirstContact && !this.isAttacking && !this.isMovingBack && !this.isDying) {
                 this.isAttacking = true;
                 let index = 0;
                 setTimeout(() => {
-                    this.wingsAudio.play(); 
+                    if(!this.world.isMuted) {
+                        this.wingsAudio.play(); 
+                    }
                 }, 1200);
                 
                 const interval = setInterval(() => {
@@ -126,13 +130,17 @@ class Endboss extends MovableObject {
                     }
                 }, 400);
             }
-        }, Math.random() * (7000 - 1000));
+        }, Math.random() * (3000 - 1000));
     }
 
     animate() {
         this.animateInterval = setInterval(() => {
-            if (!this.isAttacking && !this.isMovingBack && !this.isDying) {
-                this.playAnimation(this.IMAGES_ALERT);
+            if (this.world && this.world.character && this.world.character.x > 1200) {
+                this.hadFirstContact = true;
+            
+                if (!this.isAttacking && !this.isMovingBack && !this.isDying) {
+                    this.playAnimation(this.IMAGES_ALERT);
+                }
             }
         }, 150);
     }

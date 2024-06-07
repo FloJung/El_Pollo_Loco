@@ -5,12 +5,9 @@ class Keyboard {
     DOWN = false;
     SPACE = false;
     THROW = false;
+    MUTE = false;
 
     constructor() {
-        this.bindBtnPressEvents();
-    }
-
-    bindBtnPressEvents() {
         
     }
 }

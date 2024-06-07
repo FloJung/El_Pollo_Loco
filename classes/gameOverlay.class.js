@@ -5,6 +5,7 @@ class GameOverlay extends DrawableObject {
 
     IMAGE_OVER = [
         'img/9_intro_outro_screens/game_over/oh no you lost!.png',
+        'img/9_intro_outro_screens/game_over/game over.png',
     ];
     IMAGE_RESET = [
         'img/5_background/first_half_background.png',

@@ -2,11 +2,14 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 
+
 function init() {
     canvas = document.getElementById('canvas');
     world = new World(canvas, keyboard);
     initMobileControls();
     initStartButton(); 
+    
+    
 }
 
 function initStartButton() {
@@ -18,6 +21,7 @@ function initStartButton() {
             }
             world = new World(canvas, keyboard);
             world.startGame();
+             
         });
     }
 }
@@ -32,6 +36,8 @@ function checkOrientation() {
         document.getElementById('canvas').style.height = `100%`;
     }
 }
+
+
 
 window.addEventListener("keydown", (event) => {
     if (event.keyCode == 40) {
@@ -94,12 +100,7 @@ function initMobileControls() {
     if (muteButton) {
         muteButton.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            keyboard.MUTE = true;
-        });
-
-        moveLeftButton.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            keyboard.MUTE = false;
+            world.toggleMute();
         });
     }
 
@@ -150,6 +151,23 @@ function initMobileControls() {
             keyboard.THROW = false;
         });
     }
+
+    if(muteButton) {
+        
+        if(this.MUTE = true){
+            document.getElementById('muteGame').addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.MUTE = false;
+            });
+        }else {
+            document.getElementById('muteGame').addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.MUTE = true;
+            });
+        }
+        
+    }
+    
 }
 
 window.addEventListener('load', init);
