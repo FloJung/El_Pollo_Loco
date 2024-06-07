@@ -2,7 +2,7 @@ class Endboss extends MovableObject {
     height = 350;
     width = 500;
     y = -30;
-    speed = 20;
+    speed = 30;
     isAttacking = false;
     isMovingBack = false;
     isDying = false;
@@ -75,8 +75,8 @@ class Endboss extends MovableObject {
     }
 
     moveForward() {
-        this.x -= 200;
-    }
+        this.x -= Math.random() * (400 - 200) + 200;
+    }    
 
     moveRight() {
         this.isMovingBack = true;
@@ -160,7 +160,7 @@ class Endboss extends MovableObject {
                 clearInterval(interval);
                 setTimeout(() => {
                     this.removeFromWorld();
-                }, 2000);
+                }, 1500);
             } else {
                 this.loadImage(this.IMAGES_DEAD[index]);
                 index++;

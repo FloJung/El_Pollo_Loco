@@ -9,13 +9,15 @@ class World {
 
     throwableObject = [];
     collectedBottles = 0;
-    maxBottles = 100;
+    maxBottles = 5;
     level;
     gameOver = false;
     gameWin = false;
     gameStarted = false;
     score = 0; 
     isMuted = false;
+    lastThrowTime = 0;
+    mute = document.getElementById('muteGame');
 
     throwAudio = new Audio('audio/throwNew.mp3');
     coinAudio = new Audio('audio/coin.mp3');
@@ -40,11 +42,11 @@ class World {
 
     toggleMute() {
         this.isMuted = !this.isMuted;
-        let mute = document.getElementById('muteGame');
+        
         if(!this.isMuted) {
-            mute.innerHTML = 'Mute';
+            this.mute.innerHTML = 'Mute';
         } else {
-            mute.innerHTML = 'Unmute';
+            this.mute.innerHTML = 'Unmute';
         }
         
     }
@@ -86,7 +88,7 @@ class World {
         this.camera_x = 0;
         this.score = 0;
         this.gameWin = false;
-       
+        this.mute.innerHTML = 'Mute';
     }
 
     startGame() {
@@ -108,6 +110,7 @@ class World {
             this.draw();
             this.run();
             document.getElementById('scoreDisplay').classList.add("scoreOut");
+            
         }
     }
 
@@ -310,17 +313,18 @@ class World {
 
     checkThowObjects() {
         if (this.gameWin || this.gameOver) return;
-
-        if (this.keyboard.THROW && this.collectedBottles > 0) {
+        
+        let currentTime = Date.now();
+        if (this.keyboard.THROW && this.collectedBottles > 0 && currentTime - this.lastThrowTime >= 400) {
+            this.lastThrowTime = currentTime; 
             let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
             this.throwableObject.push(bottle);
             this.collectedBottles--;
             console.log(this.collectedBottles);
-            this.statusbar.setBottleCounter(this.collectedBottles * 10);
+            this.statusbar.setBottleCounter(this.collectedBottles * 20);
             if(!this.isMuted) {
                 this.throwAudio.play();
             }
-            
         }
     }
 
@@ -347,7 +351,7 @@ class World {
     checkForGameOverCondition() {
         if (this.level.bottle.length === 0 && this.collectedBottles === 0) {
             setTimeout(() => {
-                this.character.die();
+                    this.character.die();
             }, 2000);
              
         }
