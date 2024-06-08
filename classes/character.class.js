@@ -54,11 +54,17 @@ class Character extends MovableObject {
         this.initAnimation();
     }
 
+    /**
+    Initializes the main animations and movement handling of the character.
+    **/
     initAnimation() {
         this.manageMovement();
         this.manageStateAnimations();
     }
 
+    /**
+    Manages the character's movement based on keyboard inputs, adjusting the game's camera accordingly.
+    */
     manageMovement() {
         setInterval(() => {
             this.walkingAudio.pause();
@@ -67,6 +73,9 @@ class Character extends MovableObject {
         }, 1000 / 60);
     }
 
+    /**
+    Handles directional input from the keyboard to move the character right or left and perform jumps.
+    */
     handleKeyboardInputs() {
         if (this.world.keyboard.RIGHT) {
             this.moveRightAndPlayAudio();
@@ -79,6 +88,9 @@ class Character extends MovableObject {
         }
     }
 
+    /**
+    Moves the character to the right and plays walking audio if sound is not muted.
+    */
     moveRightAndPlayAudio() {
         if (this.x < world.level.levelEnd_x) {
             this.otherDirection = false;
@@ -87,6 +99,9 @@ class Character extends MovableObject {
         }
     }
 
+    /**
+    Moves the character to the left and plays walking audio if sound is not muted.
+    */
     moveLeftAndPlayAudio() {
         if (this.x > 0) {
             this.otherDirection = true;
@@ -94,22 +109,34 @@ class Character extends MovableObject {
             this.playAudioIfNotMuted(this.walkingAudio);
         }
     }
-
+    /**
+    Makes the character jump and plays jump audio if sound is not muted.
+    */
     jumpAndPlayAudio() {
         this.jump();
         this.playAudioIfNotMuted(this.jumpAudio);
     }
 
+    /**
+    Plays the given audio file if the game is not set to mute.
+    @param {Audio} audio - The audio file to play.
+     */
     playAudioIfNotMuted(audio) {
         if (!this.world.isMuted) {
             audio.play();
         }
     }
 
+    /**
+    Adjusts the camera position based on the character's movement.
+    */
     adjustCamera() {
         this.world.camera_x = -this.x + 100;
     }
 
+    /**
+    Manages the animation states of the character based on different conditions like death, hurt, or jumping.
+    */
     manageStateAnimations() {
         setInterval(() => {
             if (this.isDead()) {
@@ -125,13 +152,17 @@ class Character extends MovableObject {
             }
         }, 160);
     }
-
+    /**
+    Controls the walking animation sequence depending on the current movement direction.
+    */
     handleWalkingAnimation() {
         if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
             this.playAnimation(this.IMAGES_WALKING);
         }
     }
-
+    /**
+    Executes the character's death sequence, updates energy levels, and ends the game if conditions are met.
+    */
     die() {
         this.energy = 0;
         this.isDying = true;

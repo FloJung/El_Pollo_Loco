@@ -39,7 +39,9 @@ class World {
         this.winAudio.volume = 0.2;
     }
 
-
+    /**
+    Toggles the mute state of the game and updates the mute button text.
+    */
     toggleMute() {
         this.isMuted = !this.isMuted;
         
@@ -49,14 +51,19 @@ class World {
             this.mute.innerHTML = 'Unmute';
         }
     }
-    
+
+    /**
+    Sets references to the world object for characters and game overlays to ensure they can interact with the game environment.
+    */
     setWorld() {
         if (this.character) {
             this.character.world = this;
         }
         this.gameOverlay.world = this;
     }
-
+    /**
+    Draws the initial start screen of the game.
+    */
     drawStartScreen() {
         console.log('Start');
         console.log(this.gameOverlay.loadImage(this.gameOverlay.IMAGE_START[0]));
@@ -64,7 +71,9 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
     }
-
+    /**
+    Resets the game to its initial state, clearing the canvas and reinitializing game components.
+    */
     reset() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.keyboard = new Keyboard();
@@ -83,6 +92,9 @@ class World {
         this.mute.innerHTML = 'Mute';
     }
 
+    /**
+    Starts the game, initializing levels, setting up characters, and beginning the game loop.
+    */
     startGame() {
         if (!this.gameStarted) {
             this.gameStarted = true;
@@ -106,28 +118,42 @@ class World {
         }
     }
 
+    /**
+    Draws the end screen upon game completion.
+    */
     drawEndScreen() {
         this.gameOverlay.loadImage(this.gameOverlay.IMAGE_OVER[1]);
         this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
     }
 
+    /**
+    Draws the reset screen, offering options to restart or adjust game settings.
+    */
     drawRESETScreen() {
-        
         this.gameOverlay.loadImage(this.gameOverlay.IMAGE_RESET[0]);
         this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
         document.getElementById('scoreDisplay').classList.remove("scoreOut");
         document.getElementById('startGame').classList.remove("scoreOut");
     }
 
+    /**
+    Clears the canvas for redrawing.
+    */
     clearCanvas() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
+    /**
+    Displays the score and start game button for a new game or continuation.
+    */
     winScoreSreen() {
         document.getElementById('scoreDisplay').classList.remove("scoreOut");
         document.getElementById('startGame').classList.remove("scoreOut");
     }
 
+    /**
+    Main drawing loop for the game, handling all drawable objects and game state displays.
+    */
     draw() {
         if (this.gameWin) {
             this.winScoreSreen();
@@ -166,6 +192,10 @@ class World {
         }
     }
 
+    /**
+    Adds drawable objects to the canvas, ensuring they are drawn within the camera's view.
+    @param {Array} objekts - An array of drawable objects to add to the map.
+    */
     addObjektToMap(objekts) {
         objekts.forEach(o => {
             if (!o.removed) {
@@ -174,6 +204,10 @@ class World {
         });
     }
 
+    /**
+    Adds a single movable object to the map, handling direction flipping for correct display.
+    @param {MovableObject} mo - The movable object to add to the canvas.
+    */
     addToMap(mo) {
         if (mo.otherDirection) {
             this.flipImage(mo);
@@ -185,6 +219,10 @@ class World {
         }
     }
 
+    /**
+    Flips an image of a movable object for correct orientation when moving in the opposite direction.
+    @param {MovableObject} mo - The object whose image is to be flipped.
+    */
     flipImage(mo) {
         this.ctx.save();
         this.ctx.translate(mo.img.width / 4, 0);
@@ -192,11 +230,18 @@ class World {
         mo.x = mo.x * -1;
     }
 
+    /**
+    Restores the original orientation of a flipped image after drawing.
+    @param {MovableObject} mo - The object whose image was flipped.
+    */
     flipImageBack(mo) {
         mo.x = mo.x * -1;
         this.ctx.restore();
     }
 
+    /**
+    Runs game updates at a set interval, checking for object interactions and game state changes.
+    */
     run() {
         this.runInterval = setInterval(() => {
             if (this.gameStarted && !this.gameOver && !this.gameWin) {
@@ -218,6 +263,9 @@ class World {
         this.checkBottleCollisions();
     }
     
+    /**
+    Filters out and removes defeated or inactive enemies from the game.
+    */
     filterRemovedEnemies() {
         this.level.enemies = this.level.enemies.filter(enemy => {
             const isRemoved = enemy.removed;
@@ -228,6 +276,9 @@ class World {
         });
     }
     
+    /**
+    Handles collisions between the player character and enemies, processing damage and game responses.
+    */
     handleEnemyCollisions() {
         this.level.enemies.forEach(enemy => {
             if (enemy.isAlive()) {
@@ -241,7 +292,9 @@ class World {
             }
         });
     }
-    
+    /**
+    Processes interactions and collisions with the game's boss characters.
+    */
     handleBossCollisions() {
         this.level.boss.forEach(boss => {
             if (boss.isAlive()) {
@@ -256,14 +309,20 @@ class World {
             }
         });
     }
-    
+
+    /**
+    Handles damage taken by the player character upon collisions with enemies or hazardous objects.
+    */
     characterTakeDamage() {
         if (!this.character.invulnerable) {
             this.character.hit();
             this.statusbar.setPercentage(this.character.energy);
         }
     }
-    
+
+    /**
+    Processes collisions with collectible bottles, adding them to the player's inventory.
+    */
     handleBottleCollisions() {
         this.level.bottle.forEach(bottle => {
             if (this.character.isColliding(bottle)) {
@@ -271,7 +330,10 @@ class World {
             }
         });
     }
-    
+
+    /**
+    Processes collisions with coins, increasing the player's score.
+    */
     handleCoinCollisions() {
         this.level.coin.forEach(coin => {
             if (this.character.isColliding(coin)) {
@@ -280,7 +342,9 @@ class World {
         });
     }
     
-
+    /**
+    Checks for and handles collisions between throwable objects and enemies or bosses.
+    */
     checkBottleCollisions() {
         if (this.gameWin || this.gameOver) return;
         this.throwableObject.forEach((bottle) => {
@@ -296,6 +360,10 @@ class World {
         this.throwableObject = this.throwableObject.filter(bottle => !bottle.removed);
     }
 
+    /**
+    Adds a collected bottle to the player's inventory and plays a sound effect if the game is not muted.
+    @param {DrawableObject} bottle - The bottle object to collect.
+    */
     collectBottle(bottle) {
         if (this.collectedBottles < this.maxBottles) {
             console.log('Collected a bottle!');
@@ -309,6 +377,10 @@ class World {
         }
     }
 
+    /**
+    Collects a coin, updates the score, and plays a sound effect.
+    @param {DrawableObject} coin - The coin object to collect.
+    */
     collectCoin(coin) {
         coin.removeFromWorld();
         this.level.coin = this.level.coin.filter(c => !c.removed);
@@ -327,40 +399,62 @@ class World {
             this.updateBottleStatus();
             this.playThrowSound();
          }
-        }
+    }
     
+    /**
+    Checks if throwing an object is currently allowed based on game rules and timing.
+    @returns {boolean} True if the player can throw an object, false otherwise.
+    */
     isThrowAllowed() {
         let currentTime = Date.now();
         return this.keyboard.THROW && this.collectedBottles > 0 && currentTime - this.lastThrowTime >= 400;
     }
-    
+
+    /**
+    Creates a new throwable object and adds it to the game world.
+    */
     createAndThrowObject() {
         this.lastThrowTime = Date.now();
         let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
         this.throwableObject.push(bottle);
         this.collectedBottles--;
     }
-    
+
+    /**
+    Updates the display of available bottles after throwing one.
+    */
     updateBottleStatus() {
         console.log(this.collectedBottles);
         this.statusbar.setBottleCounter(this.collectedBottles * 20);
     }
-    
+
+    /**
+    Plays the sound effect for throwing an object, if the game is not muted.
+    */
     playThrowSound() {
         if (!this.isMuted) {
             this.throwAudio.play();
         }
     }
 
+    /**
+    Updates the displayed game score.
+    */
     updateScore() {
         document.getElementById('yourScore').innerText = this.score;
     }
 
+    /**
+    Ends the game and clears the game area, typically called when the player loses.
+    */
     endGame() {
         this.gameOver = true;
         this.character = null;
     }
 
+    /**
+    Triggers the game win sequence, updating the score and playing the win audio.
+    */
     winGame() {
         this.updateScore();
         console.log('Game Over. Final Score:', this.score);
@@ -371,7 +465,10 @@ class World {
         }
         this.character = null;
     }
-
+    
+    /**
+    Checks for game-over conditions, such as running out of essential resources.
+    */
     checkForGameOverCondition() {
         if (this.level.bottle.length === 0 && this.collectedBottles === 0) {
             setTimeout(() => {

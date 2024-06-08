@@ -61,6 +61,10 @@ class StatusBar extends DrawableObject {
         this.setBossCounter(100);
     }
 
+    /**
+    Draws all the status bars (life, coins, and bottles) on the provided canvas context.
+    @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+    */
     drawAllStatusBars(ctx) {
         // Lebensanzeige
         let lifeImage = this.imageCache[this.IMAGES_LIFE[this.resolveImageIndex(this.percentage)]];
@@ -75,36 +79,60 @@ class StatusBar extends DrawableObject {
         this.drawSpecific(ctx, bottleImage, this.x, this.y + 90, this.width, this.height); 
     }
     
-
+    /**
+    Draws the boss life bar on the provided canvas context.
+    @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+    */
     drawBOSSBAR(ctx) {
         let bossImage = this.imageCache[this.IMAGES_BOSSBAR[this.resolveImageIndex(this.bossLife)]];
         this.drawSpecific(ctx, bossImage, this.x + 390, this.y + 50, this.width + 50, this.height);
     }
-    
+
+    /**
+    Sets the percentage of the life status bar and updates the displayed image.
+    @param {number} percentage - The percentage of life remaining.
+    */
     setPercentage(percentage) {
         this.percentage = percentage;
         let path = this.IMAGES_LIFE[this.resolveImageIndex(percentage)];
         this.img = this.imageCache[path];
     }
     
+    /**
+    Sets the coin counter and updates the displayed coin status bar image.
+    @param {number} coins - The number of coins collected.
+    */
     setCoinCounter(coins) {
         this.coins = coins;
         let path = this.IMAGES_COIN[this.resolveImageIndex(coins)];
         this.img = this.imageCache[path];
     }
-    
+
+    /**
+    Sets the bottle counter and updates the displayed bottle status bar image.
+    @param {number} bottles - The number of bottles collected.
+    */
     setBottleCounter(bottles) {
         this.bottles = bottles;
         let path = this.IMAGES_BOTTLE[this.resolveImageIndex(bottles)];
         this.img = this.imageCache[path];
     }
-
+    
+    /**
+    Sets the boss life percentage and updates the displayed boss life bar image.
+    @param {number} bossLife - The boss's current life percentage.
+    */
     setBossCounter(bossLife) {
         this.bossLife = bossLife;
         let path = this.IMAGES_BOSSBAR[this.resolveImageIndex(bossLife)];
         this.img = this.imageCache[path];
     }
 
+    /**
+    Resolves the correct index for the status bar image based on a given value.
+    @param {number} value - The current value (percentage or count) for which to find the corresponding image index.
+    @returns {number} The index of the image that corresponds to the value.
+    */
     resolveImageIndex(value) {
         if (value >= 100) {
             return 5;
@@ -121,10 +149,16 @@ class StatusBar extends DrawableObject {
         }
     }
 
+    /**
+    Increases the coin count and updates the coin status bar.
+    */
     increaseCoins() {
         this.setCoinCounter(this.coins + 20);
     }
 
+    /**
+    Increases the bottle count and updates the bottle status bar.
+    */
     increaseBottles() {
         this.setBottleCounter(this.bottles + 20);
     }

@@ -22,17 +22,25 @@ class Chicken extends MovableObject {
         this.setupIntervals();
     }
 
+    /**
+    Sets up the intervals for movement and animation management.
+    */
     setupIntervals() {
         this.setupMovementInterval();
         this.setupAnimationInterval();
     }
-
+    /**
+    Establishes an interval for the chicken's leftward movement unless it is dead.
+    */
     setupMovementInterval() {
         setInterval(() => {
             this.moveIfNotDead();
         }, 1000 / 60);
     }
 
+    /**
+    Moves the chicken left if it is not dead.
+    */
     moveIfNotDead() {
         if (!this.isDead()) {
             this.moveLeft();  
@@ -40,12 +48,18 @@ class Chicken extends MovableObject {
         }
     }
 
+    /**
+    Sets up an interval to manage animation based on the chicken's current state.
+    */
     setupAnimationInterval() {
         setInterval(() => {
             this.animateBasedOnState();
         }, 160);
     }
 
+    /**
+    Chicken based on its current state, handling either walking or death animations.
+    */
     animateBasedOnState() {
         if (this.isDead()) {
             this.handleDeath();
@@ -53,7 +67,9 @@ class Chicken extends MovableObject {
             this.playAnimation(this.IMAGES_WALKING);
         }
     }
-
+    /**
+    Chicken's death animation and plays a death sound.
+    */
     handleDeath() {
         if (!world.isMuted && !this.audioPlayed) { 
             this.chickenAudio.play();
