@@ -34,7 +34,7 @@ class Keyboard {
     }
 
     registerTouchListeners() {
-        // Diese Methode implementiert ähnliche Logik für Touch-Events
+       
         const controls = [
             { elementId: 'moveLeft', action: () => this.LEFT = true, endAction: () => this.LEFT = false },
             { elementId: 'moveRight', action: () => this.RIGHT = true, endAction: () => this.RIGHT = false },

@@ -200,46 +200,53 @@ class World {
     run() {
         this.runInterval = setInterval(() => {
             if (this.gameStarted && !this.gameOver && !this.gameWin) {
-                this.checkThowObjects();
+                this.checkThrowObjects();
                 this.checkCollisions();
                 this.checkBottleCollisions();
                 this.checkForGameOverCondition();
             }
-        }, 200);
+        }, 160);
     }
 
     checkCollisions() {
         if (this.gameWin || this.gameOver) return;
-        this.level.enemies = this.level.enemies.filter((enemy) => {
-            if (enemy.removed) {
+        this.filterRemovedEnemies();
+        this.handleEnemyCollisions();
+        this.handleBossCollisions();
+        this.handleBottleCollisions();
+        this.handleCoinCollisions();
+        this.checkBottleCollisions();
+    }
+    
+    filterRemovedEnemies() {
+        this.level.enemies = this.level.enemies.filter(enemy => {
+            const isRemoved = enemy.removed;
+            if (isRemoved) {
                 console.log(`${enemy.constructor.name} removed from enemies array`);
             }
-            return !enemy.removed;
+            return !isRemoved;
         });
-
-        this.level.enemies.forEach((enemy) => {
+    }
+    
+    handleEnemyCollisions() {
+        this.level.enemies.forEach(enemy => {
             if (enemy.isAlive()) {
                 if (this.character.isLandingOnTop(enemy)) {
                     enemy.takeDamage(100);
                     this.score += 50;
                     this.updateScore();
                 } else if (this.character.isColliding(enemy)) {
-                    if (!this.character.invulnerable) {
-                        this.character.hit();
-                        this.statusbar.setPercentage(this.character.energy);
-                    }
+                    this.characterTakeDamage();
                 }
             }
         });
-
-        this.level.boss.forEach((boss) => {
+    }
+    
+    handleBossCollisions() {
+        this.level.boss.forEach(boss => {
             if (boss.isAlive()) {
                 if (this.character.isColliding(boss)) {
-                    if (!this.character.invulnerable) {
-                        this.character.hit();
-                        this.statusbar.setPercentage(this.character.energy);
-                    }
-                }
+                    this.characterTakeDamage();}
             } else if (this.score < 500) {
                 setTimeout(() => {
                     this.updateScore();
@@ -248,20 +255,31 @@ class World {
                 }, 500);
             }
         });
-
-        this.level.bottle.forEach((bottle) => {
+    }
+    
+    characterTakeDamage() {
+        if (!this.character.invulnerable) {
+            this.character.hit();
+            this.statusbar.setPercentage(this.character.energy);
+        }
+    }
+    
+    handleBottleCollisions() {
+        this.level.bottle.forEach(bottle => {
             if (this.character.isColliding(bottle)) {
                 this.collectBottle(bottle);
             }
         });
-
-        this.level.coin.forEach((coin) => {
+    }
+    
+    handleCoinCollisions() {
+        this.level.coin.forEach(coin => {
             if (this.character.isColliding(coin)) {
                 this.collectCoin(coin);
             }
         });
-        this.checkBottleCollisions();
     }
+    
 
     checkBottleCollisions() {
         if (this.gameWin || this.gameOver) return;
@@ -302,19 +320,35 @@ class World {
         } 
     }
 
-    checkThowObjects() {
+    checkThrowObjects() {
         if (this.gameWin || this.gameOver) return;
+        if (this.isThrowAllowed()) {
+            this.createAndThrowObject();
+            this.updateBottleStatus();
+            this.playThrowSound();
+         }
+        }
+    
+    isThrowAllowed() {
         let currentTime = Date.now();
-        if (this.keyboard.THROW && this.collectedBottles > 0 && currentTime - this.lastThrowTime >= 400) {
-            this.lastThrowTime = currentTime; 
-            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
-            this.throwableObject.push(bottle);
-            this.collectedBottles--;
-            console.log(this.collectedBottles);
-            this.statusbar.setBottleCounter(this.collectedBottles * 20);
-            if(!this.isMuted) {
-                this.throwAudio.play();
-            }
+        return this.keyboard.THROW && this.collectedBottles > 0 && currentTime - this.lastThrowTime >= 400;
+    }
+    
+    createAndThrowObject() {
+        this.lastThrowTime = Date.now();
+        let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
+        this.throwableObject.push(bottle);
+        this.collectedBottles--;
+    }
+    
+    updateBottleStatus() {
+        console.log(this.collectedBottles);
+        this.statusbar.setBottleCounter(this.collectedBottles * 20);
+    }
+    
+    playThrowSound() {
+        if (!this.isMuted) {
+            this.throwAudio.play();
         }
     }
 

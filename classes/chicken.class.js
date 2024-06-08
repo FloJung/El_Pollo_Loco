@@ -19,28 +19,46 @@ class Chicken extends MovableObject {
         this.loadImages(this.IMAGES_DEAD);
         this.speed = 0.15 + Math.random() * 0.55;
         this.chickenAudio.volume = 0.2;
-        this.animate();
+        this.setupIntervals();
     }
 
-    animate() {
-        setInterval(() => {
-            if (!this.isDead()) {
-                this.moveLeft();  
-                this.audioPlayed = false;
-            }
-        }, 1000 / 60);
+    setupIntervals() {
+        this.setupMovementInterval();
+        this.setupAnimationInterval();
+    }
 
+    setupMovementInterval() {
         setInterval(() => {
-            if (this.isDead()) {
-                
-                if (!world.isMuted && !this.audioPlayed) { 
-                    this.chickenAudio.play();
-                    this.audioPlayed = true;  
-                }
-                this.playAnimation(this.IMAGES_DEAD);
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
+            this.moveIfNotDead();
+        }, 1000 / 60);
+    }
+
+    moveIfNotDead() {
+        if (!this.isDead()) {
+            this.moveLeft();  
+            this.audioPlayed = false;
+        }
+    }
+
+    setupAnimationInterval() {
+        setInterval(() => {
+            this.animateBasedOnState();
         }, 160);
+    }
+
+    animateBasedOnState() {
+        if (this.isDead()) {
+            this.handleDeath();
+        } else {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }
+
+    handleDeath() {
+        if (!world.isMuted && !this.audioPlayed) { 
+            this.chickenAudio.play();
+            this.audioPlayed = true;  
+        }
+        this.playAnimation(this.IMAGES_DEAD);
     }
 }

@@ -49,6 +49,10 @@ class Endboss extends MovableObject {
 
     constructor() {
         super();
+        this.initEndboss();
+    }
+
+    initEndboss() {
         this.loadImage(this.IMAGES_ALERT[0]);
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_ATTACK);
@@ -56,16 +60,19 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_DEAD);
         this.x = this.originalX;
         this.energy = 100;
-        this.walkAudio.volume = 0.5;
-        this.wingsAudio.volume = 0.5;
+        this.setAudioLevels();
         this.animate();
         this.attack();
+    }
+
+    setAudioLevels() {
+        this.walkAudio.volume = 0.5;
+        this.wingsAudio.volume = 0.5;
     }
 
     takeDamage(amount) {
         this.energy -= amount;
         if (this.energy <= 0) {
-            this.energy = 0;
             this.die();
         }
     }
@@ -76,77 +83,101 @@ class Endboss extends MovableObject {
 
     moveForward() {
         this.x -= Math.random() * (400 - 200) + 200;
-    }    
+    }
 
     moveRight() {
         this.isMovingBack = true;
-        this.moveInterval = setInterval(() => {
-            if (this.x < this.originalX) {
-                this.x += this.speed;
-                this.playAnimation(this.IMAGES_WALK);
-                if (this.walkAudio.paused) {
-                    this.walkAudio.loop = true;
-                    if(!this.world.isMuted) {
-                         this.walkAudio.play();
-                    }
-                   
-                }
-            } else {
-                clearInterval(this.moveInterval);
-                this.isMovingBack = false;
-                if (!this.isDying) {
-                    this.playAnimation(this.IMAGES_ALERT);
-                }
-                this.walkAudio.pause();
-                this.walkAudio.currentTime = 0; 
+        this.startMoveRight();
+    }
+
+    startMoveRight() {
+        this.moveInterval = setInterval(this.executeMoveRight.bind(this), 160);
+    }
+
+    executeMoveRight() {
+        if (this.x < this.originalX) {
+            this.x += this.speed;
+            this.playAnimation(this.IMAGES_WALK);
+            this.manageWalkAudio();
+        } else {
+            clearInterval(this.moveInterval);
+            this.endMoveRight();
+        }
+    }
+
+    manageWalkAudio() {
+        if (this.walkAudio.paused) {
+            this.walkAudio.loop = true;
+            if(!this.world.isMuted) {
+                this.walkAudio.play();
             }
-        },160);
+        }
+    }
+
+    endMoveRight() {
+        this.isMovingBack = false;
+        if (!this.isDying) {
+            this.playAnimation(this.IMAGES_ALERT);
+        }
+        this.walkAudio.pause();
+        this.walkAudio.currentTime = 0;
     }
 
     attack() {
-        this.attackInterval = setInterval(() => {
-            if (this.hadFirstContact && !this.isAttacking && !this.isMovingBack && !this.isDying) {
-                this.isAttacking = true;
-                let index = 0;
-                setTimeout(() => {
-                    if(!this.world.isMuted) {
-                        this.wingsAudio.play(); 
-                    }
-                }, 1200);
-                
-                const interval = setInterval(() => {
-                    if (index === 5) {
-                        this.moveForward();
-                    }
-                    if (index >= this.IMAGES_ATTACK.length) {
-                        clearInterval(interval);
-                        this.isAttacking = false;
-                        this.moveRight();
-                        this.wingsAudio.pause(); 
-                        this.wingsAudio.currentTime = 0;
-                    } else {
-                        this.loadImage(this.IMAGES_ATTACK[index]);
-                        index++;
-                    }
-                }, 400);
+        this.attackInterval = setInterval(this.initiateAttack.bind(this), Math.random() * (3000 - 1000) + 1000);
+    }
+
+    initiateAttack() {
+        if (this.hadFirstContact && !this.isAttacking && !this.isMovingBack && !this.isDying) {
+            this.isAttacking = true;
+            setTimeout(() => {
+                if(!this.world.isMuted) {
+                    this.wingsAudio.play(); 
+                }
+            }, 1200);
+            this.executeAttack();
+        }
+    }
+
+    executeAttack() {
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index === 5) {
+                this.moveForward();
             }
-        }, Math.random() * (3000 - 1000));
+            if (index >= this.IMAGES_ATTACK.length) {
+                clearInterval(interval);
+                this.isAttacking = false;
+                this.moveRight();
+                this.wingsAudio.pause(); 
+                this.wingsAudio.currentTime = 0;
+            } else {
+                this.loadImage(this.IMAGES_ATTACK[index]);
+                index++;
+            }
+        }, 400);
     }
 
     animate() {
-        this.animateInterval = setInterval(() => {
-            if (this.world && this.world.character && this.world.character.x > 1200) {
-                this.hadFirstContact = true;
-            
-                if (!this.isAttacking && !this.isMovingBack && !this.isDying) {
-                    this.playAnimation(this.IMAGES_ALERT);
-                }
+        this.animateInterval = setInterval(this.checkFirstContact.bind(this), 160);
+    }
+
+    checkFirstContact() {
+        if (this.world && this.world.character && this.world.character.x > 1200) {
+            this.hadFirstContact = true;
+        
+            if (!this.isAttacking && !this.isMovingBack && !this.isDying) {
+                this.playAnimation(this.IMAGES_ALERT);
             }
-        }, 160);
+        }
     }
 
     die() {
-        this.isDying = true;
+        this.stopActivities();
+        this.playDeathAnimation();
+    }
+
+    stopActivities() {
         clearInterval(this.attackInterval);
         clearInterval(this.animateInterval);
         clearInterval(this.moveInterval);
@@ -154,6 +185,9 @@ class Endboss extends MovableObject {
         this.walkAudio.currentTime = 0;
         this.wingsAudio.pause();
         this.wingsAudio.currentTime = 0;
+    }
+
+    playDeathAnimation() {
         let index = 0;
         const interval = setInterval(() => {
             if (index >= this.IMAGES_DEAD.length) {
