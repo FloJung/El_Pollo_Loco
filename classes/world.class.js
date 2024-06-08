@@ -48,16 +48,12 @@ class World {
         } else {
             this.mute.innerHTML = 'Unmute';
         }
-        
     }
     
-    
-
     setWorld() {
         if (this.character) {
             this.character.world = this;
         }
-       
         this.gameOverlay.world = this;
     }
 
@@ -68,10 +64,6 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
     }
-
-   
-
-    
 
     reset() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -115,24 +107,34 @@ class World {
     }
 
     drawEndScreen() {
-        this.gameOverlay.loadImage(this.gameOverlay.IMAGE_OVER[0||1]);
+        this.gameOverlay.loadImage(this.gameOverlay.IMAGE_OVER[1]);
         this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
     }
 
     drawRESETScreen() {
+        
         this.gameOverlay.loadImage(this.gameOverlay.IMAGE_RESET[0]);
         this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
         document.getElementById('scoreDisplay').classList.remove("scoreOut");
         document.getElementById('startGame').classList.remove("scoreOut");
     }
 
+    clearCanvas() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    winScoreSreen() {
+        document.getElementById('scoreDisplay').classList.remove("scoreOut");
+        document.getElementById('startGame').classList.remove("scoreOut");
+    }
+
     draw() {
         if (this.gameWin) {
-            document.getElementById('scoreDisplay').classList.remove("scoreOut");
-            document.getElementById('startGame').classList.remove("scoreOut");
+            this.winScoreSreen();
         } else if (this.gameOver) {
             this.drawEndScreen();
             setTimeout(() => {
+                this.clearCanvas();
                 this.drawRESETScreen();
             }, 2000);
         } else if (!this.gameStarted) {
@@ -140,9 +142,7 @@ class World {
         } else {
             document.getElementById('startGame').classList.add("scoreOut");
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
             this.ctx.translate(this.camera_x, 0);
-
             this.addObjektToMap(this.level.backgroundObjekts);
             if (this.character) {
                 this.addToMap(this.character);
@@ -155,13 +155,10 @@ class World {
             this.statusbar.drawAllStatusBars(this.ctx);
             this.statusbar.drawBOSSBAR(this.ctx);
             this.ctx.translate(this.camera_x, 0);
-
             this.addObjektToMap(this.level.enemies);
             this.addObjektToMap(this.level.boss);
             this.addObjektToMap(this.throwableObject);
-
             this.ctx.translate(-this.camera_x, 0);
-
             let self = this;
             requestAnimationFrame(function () {
                 self.draw();
@@ -181,10 +178,8 @@ class World {
         if (mo.otherDirection) {
             this.flipImage(mo);
         }
-
         mo.draw(this.ctx);
         mo.drawFrame(this.ctx);
-
         if (mo.otherDirection) {
             this.flipImageBack(mo);
         }
@@ -215,7 +210,6 @@ class World {
 
     checkCollisions() {
         if (this.gameWin || this.gameOver) return;
-
         this.level.enemies = this.level.enemies.filter((enemy) => {
             if (enemy.removed) {
                 console.log(`${enemy.constructor.name} removed from enemies array`);
@@ -271,7 +265,6 @@ class World {
 
     checkBottleCollisions() {
         if (this.gameWin || this.gameOver) return;
-
         this.throwableObject.forEach((bottle) => {
             this.level.boss.forEach((boss) => {
                 if (bottle.isColliding(boss)) {
@@ -282,7 +275,6 @@ class World {
                 }
             });
         });
-
         this.throwableObject = this.throwableObject.filter(bottle => !bottle.removed);
     }
 
@@ -307,13 +299,11 @@ class World {
         this.updateScore();
         if(!this.isMuted) {
             this.coinAudio.play();
-        }
-        
+        } 
     }
 
     checkThowObjects() {
         if (this.gameWin || this.gameOver) return;
-        
         let currentTime = Date.now();
         if (this.keyboard.THROW && this.collectedBottles > 0 && currentTime - this.lastThrowTime >= 400) {
             this.lastThrowTime = currentTime; 
@@ -352,8 +342,7 @@ class World {
         if (this.level.bottle.length === 0 && this.collectedBottles === 0) {
             setTimeout(() => {
                     this.character.die();
-            }, 2000);
-             
+            }, 2000);  
         }
     }
 }

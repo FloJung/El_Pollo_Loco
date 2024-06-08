@@ -100,7 +100,7 @@ class Endboss extends MovableObject {
                 this.walkAudio.pause();
                 this.walkAudio.currentTime = 0; 
             }
-        }, 200);
+        },160);
     }
 
     attack() {
@@ -142,7 +142,7 @@ class Endboss extends MovableObject {
                     this.playAnimation(this.IMAGES_ALERT);
                 }
             }
-        }, 150);
+        }, 160);
     }
 
     die() {
@@ -165,6 +165,6 @@ class Endboss extends MovableObject {
                 this.loadImage(this.IMAGES_DEAD[index]);
                 index++;
             }
-        }, 200);
+        }, 160);
     }
 }

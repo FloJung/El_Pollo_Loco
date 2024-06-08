@@ -231,7 +231,8 @@ canvas {
         padding: 10px 15px;
         font-size: 16px;
     }
-    .hud{
+    
+    .hud {
         width: 100%;
     }
     
@@ -250,9 +251,7 @@ canvas {
         display: none;
     }
 
-    body {
-        background: none;
-    }
+    
 }
 
 @media (max-height: 720px) {

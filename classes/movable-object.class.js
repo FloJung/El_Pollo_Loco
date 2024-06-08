@@ -23,7 +23,7 @@ class MovableObject extends DrawableObject{
                 this.invulnerable = true;
                 setTimeout(() => {
                     this.invulnerable = false;
-                }, 100); // 10ms Unverwundbarkeit
+                }, 160); // 10ms Unverwundbarkeit
             }
         }
     }
@@ -93,7 +93,7 @@ class MovableObject extends DrawableObject{
                 this.invulnerable = true;
                 setTimeout(() => {
                     this.invulnerable = false;
-                }, 100); // 10ms Unverwundbarkeit
+                }, 160); // 10ms Unverwundbarkeit
             }
         }
     }
