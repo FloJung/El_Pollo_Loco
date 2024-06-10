@@ -50,19 +50,20 @@ class World {
         
     }
 
+    /**
+    Manages the playback of game background music based on the game's current state and sound settings.
+    If the game is over, won, or sounds are muted, it pauses the music.
+    */
     music() {
         setInterval(() => {
             if (this.gameStarted && !this.gameOver && !this.gameWin) {
                 if (!this.isMuted) {              
                     this.gameAudio.play();
-                    console.log('BB')
                 } else {
                     this.gameAudio.pause(); 
-                    console.log('SS') 
                 }
             }
-        }, 500);
-        
+        }, 500); 
     }
 
     /**
