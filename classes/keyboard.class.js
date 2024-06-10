@@ -8,10 +8,11 @@ class Keyboard {
         this.THROW = false;
         this.MUTE = false;
         
-        this.registerKeyListeners();
-        this.registerTouchListeners();
     }
 
+    /**
+    Registers event listeners for keyboard interactions, updating key states based on user input.
+    */
     registerKeyListeners() {
         window.addEventListener("keydown", (event) => {
             this.updateKeyStatus(event.keyCode, true);
@@ -22,6 +23,11 @@ class Keyboard {
         });
     }
 
+    /**
+    Updates the state of a key based on its keyCode and whether it is being pressed or released.
+    @param {number} keyCode - The keyCode of the key being interacted with.
+    @param {boolean} isPressed - True if the key is being pressed, false if it is being released.
+    */
     updateKeyStatus(keyCode, isPressed) {
         switch (keyCode) {
             case 40: this.DOWN = isPressed; break;
@@ -33,6 +39,9 @@ class Keyboard {
         }
     }
 
+    /**
+    Registers touch event listeners for on-screen controls, handling touch interactions to mimic keyboard inputs.
+    */
     registerTouchListeners() {
        
         const controls = [

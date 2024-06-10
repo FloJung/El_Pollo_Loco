@@ -18,6 +18,12 @@ class GameOverlay extends DrawableObject {
         this.loadImage(this.IMAGE_RESET[0]);
     }
 
+
+    /**
+    Loads a single image and sets it as the current image of the overlay.
+    Overrides the loadImage method from DrawableObject to set the loaded image as the current display image.
+    @param {string} path - The path to the image file.
+    */
     loadImage(path) {
         this.img = new Image();
         this.img.src = path;

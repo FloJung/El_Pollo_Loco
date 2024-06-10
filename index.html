@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" translate="no">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="icon" type="image/png" href="img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png">
     <script src="classes/drawableObject.class.js"></script>
     <script src="classes/world.class.js"></script>
     <script src="classes/statusBar.class.js"></script>
     <script src="classes/movable-object.class.js"></script>
     <script src="classes/throwableObject.class.js"></script>
     <script src="classes/chicken.class.js"></script>
+    <script src="classes/smallChicken.class.js"></script>
     <script src="classes/character.class.js"></script>
     <script src="classes/clouds.class.js"></script>
     <script src="classes/background-objekt.class.js"></script>
@@ -26,7 +28,12 @@
 <body onload="init()">
     <h1>El Pollo Loco</h1>
     <div class="hud">
+        <div id="rotateDevice" style="display: none;">
+            <img id="rotateDeviceGif"  style="display: none;" class="handyGif" src="img/turn-phone.gif">
+        </div>
         <div class="playPanel">
+            
+            
             <div>
                 <button class="btn" id="startGame">Play</button>
                 <button class="btn" id="muteGame" onclick="world.toggleMute()">Mute</button>

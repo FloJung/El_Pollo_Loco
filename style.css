@@ -32,6 +32,10 @@ span {
     font-weight: bold;
 }
 
+.handyGif {
+    width: 250px;
+}
+
 /* Grundlegende Stile für alle Buttons */
 .btn {
     display: inline-block;
@@ -210,6 +214,26 @@ canvas {
     }
     
 }
+
+@media (max-width: 720px) {
+    
+       #rotateDevice {
+        position: fixed;
+        z-index: 2;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.8);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        z-index: 1000;
+    }
+}
+
 @media (max-width: 550px) {
     
     .score {
@@ -223,6 +247,22 @@ canvas {
     
     #yourScore {
         font-size: 44px;
+    }
+
+    #rotateDevice {
+        position: fixed;
+        z-index: 2;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.8);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        z-index: 1000;
     }
 }
 
@@ -283,3 +323,8 @@ canvas {
         font-size: 14px;
     }
 }
+
+
+
+
+

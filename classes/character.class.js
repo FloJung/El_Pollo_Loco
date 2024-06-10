@@ -4,7 +4,13 @@ class Character extends MovableObject {
     speed = 5;
     y = 240;
     invulnerable = false;
+    world;
+    walkingAudio = new Audio('audio/walking.mp3');
+    jumpAudio = new Audio('audio/jump.mp3');
+    hurtAudio = new Audio('audio/hurt.mp3');
+
     
+
     IMAGES_WALKING = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -39,10 +45,7 @@ class Character extends MovableObject {
         'img/2_character_pepe/4_hurt/H-43.png',
     ];
     
-    world;
-    walkingAudio = new Audio('audio/walking.mp3');
-    jumpAudio = new Audio('audio/jump.mp3');
-    hurtAudio = new Audio('audio/hurt.mp3');
+    
 
     constructor() {
         super().loadImage('img/2_character_pepe/1_idle/idle/I-1.png');
@@ -109,6 +112,7 @@ class Character extends MovableObject {
             this.playAudioIfNotMuted(this.walkingAudio);
         }
     }
+
     /**
     Makes the character jump and plays jump audio if sound is not muted.
     */
@@ -152,6 +156,7 @@ class Character extends MovableObject {
             }
         }, 160);
     }
+
     /**
     Controls the walking animation sequence depending on the current movement direction.
     */
@@ -160,6 +165,7 @@ class Character extends MovableObject {
             this.playAnimation(this.IMAGES_WALKING);
         }
     }
+
     /**
     Executes the character's death sequence, updates energy levels, and ends the game if conditions are met.
     */

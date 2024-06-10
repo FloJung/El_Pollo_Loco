@@ -18,12 +18,18 @@ class ThrowableObject extends MovableObject{
         this.throw();
     }
 
+    /**
+    Initiates an animation loop for the throwable object, cycling through images to simulate rotation or motion.
+    */
     animate() {
         setInterval(() =>{
             this.playAnimation(this.IMAGES_BOTTLE);    
         },120);
     }
 
+    /**
+    Initiates the throwing motion of the object, applying gravity and horizontal motion.
+    */
     throw() {
         this.x;
         this.y;

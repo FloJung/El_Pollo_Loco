@@ -9,6 +9,13 @@ class MovableObject extends DrawableObject{
     removed = false;
     isDying = false;
 
+    offset = {
+        top:0,
+        bottom:10,
+        left:30,
+        right:30
+    }
+
     constructor() {
         super();
     }
@@ -93,25 +100,28 @@ class MovableObject extends DrawableObject{
     @returns {boolean} True if colliding, false otherwise.
     */
     isColliding(mo) {
-        return  this.x + this.height > mo.x &&
-            this.y + this.width > mo.y &&
-            this.x < mo.x &&
-            this.y < mo.y + mo.width
+        return (this.x + this.height - this.offset.right > mo.x + mo.offset.left &&
+                this.y + this.width - this.offset.bottom > mo.y + mo.offset.top &&
+                this.x + this.offset.left < mo.x + mo.height - mo.offset.right &&
+                this.y + this.offset.top < mo.y + mo.width - mo.offset.bottom);
     }
-
+    
+    
     /**
-    Determines if this object is landing on top of another object.
-    @param {MovableObject} mo - The other movable object.
-    @returns {boolean} True if landing on top, false otherwise.
-    */
+     * Determines if this object is landing on top of another object.
+     * @param {MovableObject} mo - The other movable object.
+     * @returns {boolean} True if landing on top, false otherwise.
+     */
     isLandingOnTop(mo) {
-        const bottomOfThis = this.y + this.width;  
-        const topOfObject = mo.y;  
+        const bottomOfThis = this.y + this.width - this.offset.bottom;
+        const topOfObject = mo.y + mo.offset.top;
         const isVerticalOverlap = bottomOfThis >= topOfObject && bottomOfThis <= topOfObject + mo.width;
-        const isHorizontalOverlap = this.x + this.height > mo.x && this.x < mo.x + mo.height + 40;
+        const isHorizontalOverlap = this.x + this.height - this.offset.right > mo.x + mo.offset.left &&
+                                    this.x + this.offset.left < mo.x + mo.height - mo.offset.right;
     
         return this.speedY < 0 && isVerticalOverlap && isHorizontalOverlap;
     }
+    
     
     
     /**
@@ -156,7 +166,6 @@ class MovableObject extends DrawableObject{
     Handles the object's death process, logging its death and scheduling its removal from the game world.
     */
     die() {
-        console.log(`${this.constructor.name} is dead!`);
         this.dead = true;
         setTimeout(() => {
             this.removeFromWorld();
@@ -167,9 +176,7 @@ class MovableObject extends DrawableObject{
     Removes the object from the game world, logging the removal.
     */
     removeFromWorld() {
-        console.log(`${this.constructor.name} is removed from world!`);
         this.removed = true;
-        console.log(this.removed);
     }
 
 }

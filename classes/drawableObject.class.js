@@ -6,10 +6,17 @@ class DrawableObject {
     height = 150;
     width = 200;
     currentImage = 0;
+    offset = {
+        top:0,
+        bottom:30,
+        left:40,
+        rigth:30
+    }
 
     constructor() {
         
     }
+
     /**
     Loads an image from a specified path and sets it as the object's main image.
     @param {string} path - The path to the image file.
@@ -30,6 +37,7 @@ class DrawableObject {
             this.imageCache[path] = img;  
         });
     }
+
     /**
     Draws the object's main image at its current position on the provided canvas context.
     @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
@@ -39,14 +47,30 @@ class DrawableObject {
     }
 
     drawFrame(ctx) {
-        // if(this instanceof Character || this instanceof Chicken || this instanceof Endboss || this instanceof ThrowableObject || this instanceof Coin || this instanceof Bottle) {
-        //     ctx.beginPath();
-        //     ctx.lineWidth = '3';
-        //     ctx.strokeStyle = 'blue';
-        //     ctx.rect(this.x,this.y,this.height, this.width);
-        //     ctx.stroke();
-        // }
+        if (this instanceof Character || this instanceof Chicken || this instanceof Endboss || this instanceof ThrowableObject || this instanceof Coin || this instanceof Bottle) {
+            // Zeichnen des ursprünglichen Rahmens
+            ctx.beginPath();
+            ctx.lineWidth = '2';
+            ctx.strokeStyle = 'blue';
+            ctx.rect(this.x, this.y, this.height, this.width);
+            ctx.stroke();
+            
+            // Zeichnen des neuen Rahmens mit Offset
+            ctx.beginPath();
+            ctx.lineWidth = '2';
+            ctx.strokeStyle = 'red'; // Roter Rahmen, um den Offset zu verdeutlichen
+            ctx.rect(
+                this.x + this.offset.left,
+                this.y + this.offset.top,
+                this.height - this.offset.right - this.offset.left,
+                this.width - this.offset.top - this.offset.bottom
+            );
+            ctx.stroke();
+        }
     }
+    
+    
+
     /**
     Draws a specific image at a specified position and size on the provided canvas context.
      * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.

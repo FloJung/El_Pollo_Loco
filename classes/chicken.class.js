@@ -12,6 +12,15 @@ class Chicken extends MovableObject {
 
     IMAGES_DEAD = ['img/3_enemies_chicken/chicken_normal/2_dead/dead.png'];
 
+
+    IMAGES_WALKING_CHICK = [
+        'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
+        'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
+        'img/3_enemies_chicken/chicken_small/1_walk/3_w.png',
+    ];
+
+    IMAGES_DEAD_CHICK = ['img/3_enemies_chicken/chicken_small/2_dead/dead.png'];
+
     constructor() {
         super().loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
         this.x = 400 + Math.random() * 800;
@@ -29,6 +38,7 @@ class Chicken extends MovableObject {
         this.setupMovementInterval();
         this.setupAnimationInterval();
     }
+
     /**
     Establishes an interval for the chicken's leftward movement unless it is dead.
     */
@@ -67,6 +77,7 @@ class Chicken extends MovableObject {
             this.playAnimation(this.IMAGES_WALKING);
         }
     }
+
     /**
     Chicken's death animation and plays a death sound.
     */

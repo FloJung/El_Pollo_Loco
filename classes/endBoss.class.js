@@ -46,11 +46,13 @@ class Endboss extends MovableObject {
         'img/4_enemie_boss_chicken/5_dead/G25.png',
         'img/4_enemie_boss_chicken/5_dead/G26.png',
     ];
+    
 
     constructor() {
         super();
         this.initEndboss();
     }
+
     /**
     Initializes the Endboss settings, loads images, sets the starting position and audio levels, and starts animations and attacks.
     */
@@ -66,6 +68,7 @@ class Endboss extends MovableObject {
         this.animate();
         this.attack();
     }
+
     /**
     Sets the volume levels for the audio components of the Endboss.
     */
@@ -96,7 +99,7 @@ class Endboss extends MovableObject {
     Moves the Endboss forward randomly within a defined range.
     */
     moveForward() {
-        this.x -= Math.random() * (400 - 200) + 200;
+        this.x -= Math.random() * (600 - 200) + 250;
     }
 
     /**
@@ -106,12 +109,14 @@ class Endboss extends MovableObject {
         this.isMovingBack = true;
         this.startMoveRight();
     }
+
     /**
     Begins the interval to move the Endboss back to the right towards its original x-coordinate.
     */
     startMoveRight() {
         this.moveInterval = setInterval(this.executeMoveRight.bind(this), 160);
     }
+
     /**
     Executes the movement to the right during the move interval and manages animation and audio.
     */
@@ -153,6 +158,7 @@ class Endboss extends MovableObject {
     attack() {
         this.attackInterval = setInterval(this.initiateAttack.bind(this), Math.random() * (3000 - 1000) + 1000);
     }
+
     /**
     Initiates the attack sequence if conditions are met, plays wing flapping audio, and executes the attack moves.
     */

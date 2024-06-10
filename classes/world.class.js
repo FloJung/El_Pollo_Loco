@@ -30,11 +30,8 @@ class World {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
-        
         this.setWorld();
         this.drawStartScreen();
-        
-        console.log(this.statusbar);
         this.updateScore();
         this.winAudio.volume = 0.2;
     }
@@ -43,12 +40,12 @@ class World {
     Toggles the mute state of the game and updates the mute button text.
     */
     toggleMute() {
-        this.isMuted = !this.isMuted;
-        
-        if(!this.isMuted) {
-            this.mute.innerHTML = 'Mute';
-        } else {
-            this.mute.innerHTML = 'Unmute';
+        if(this.gameOver || this.gameWin) {
+            this.isMuted = this.isMuted;
+            this.mute.innerHTML = this.isMuted = 'Unmute';
+        } else if (!this.gameOver && !this.gameWin) {
+            this.isMuted = !this.isMuted;
+            this.mute.innerHTML = this.isMuted ? 'Unmute' : 'Mute';
         }
     }
 
@@ -61,16 +58,16 @@ class World {
         }
         this.gameOverlay.world = this;
     }
+
     /**
     Draws the initial start screen of the game.
     */
     drawStartScreen() {
-        console.log('Start');
-        console.log(this.gameOverlay.loadImage(this.gameOverlay.IMAGE_START[0]));
         this.gameOverlay.loadImage(this.gameOverlay.IMAGE_START[0]);
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
     }
+
     /**
     Resets the game to its initial state, clearing the canvas and reinitializing game components.
     */
@@ -114,7 +111,6 @@ class World {
             this.draw();
             this.run();
             document.getElementById('scoreDisplay').classList.add("scoreOut");
-            
         }
     }
 
@@ -130,10 +126,10 @@ class World {
     Draws the reset screen, offering options to restart or adjust game settings.
     */
     drawRESETScreen() {
-        this.gameOverlay.loadImage(this.gameOverlay.IMAGE_RESET[0]);
-        this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
         document.getElementById('scoreDisplay').classList.remove("scoreOut");
         document.getElementById('startGame').classList.remove("scoreOut");
+        this.gameOverlay.loadImage(this.gameOverlay.IMAGE_RESET[0]);
+        this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
     }
 
     /**
@@ -141,6 +137,7 @@ class World {
     */
     clearCanvas() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.drawRESETScreen();
     }
 
     /**
@@ -156,12 +153,13 @@ class World {
     */
     draw() {
         if (this.gameWin) {
+            this.toggleMute();
             this.winScoreSreen();
         } else if (this.gameOver) {
             this.drawEndScreen();
+            this.toggleMute();
             setTimeout(() => {
                 this.clearCanvas();
-                this.drawRESETScreen();
             }, 2000);
         } else if (!this.gameStarted) {
             this.drawStartScreen();
@@ -269,9 +267,6 @@ class World {
     filterRemovedEnemies() {
         this.level.enemies = this.level.enemies.filter(enemy => {
             const isRemoved = enemy.removed;
-            if (isRemoved) {
-                console.log(`${enemy.constructor.name} removed from enemies array`);
-            }
             return !isRemoved;
         });
     }
@@ -292,6 +287,7 @@ class World {
             }
         });
     }
+
     /**
     Processes interactions and collisions with the game's boss characters.
     */
@@ -347,16 +343,27 @@ class World {
     */
     checkBottleCollisions() {
         if (this.gameWin || this.gameOver) return;
+    
         this.throwableObject.forEach((bottle) => {
+            // Kollision mit Bossen
             this.level.boss.forEach((boss) => {
                 if (bottle.isColliding(boss)) {
                     boss.takeDamage(20);
                     this.statusbar.setBossCounter(boss.energy);
                     bottle.removeFromWorld();
-                    console.log('Boss hit by bottle!');
+                }
+            });
+    
+            // Kollision mit normalen Gegnern
+            this.level.enemies.forEach((enemy) => {
+                if (bottle.isColliding(enemy)) {
+                    enemy.takeDamage(100);
+                    bottle.removeFromWorld();
                 }
             });
         });
+    
+        // Filtert entfernte Wurfobjekte aus dem Array heraus
         this.throwableObject = this.throwableObject.filter(bottle => !bottle.removed);
     }
 
@@ -366,7 +373,6 @@ class World {
     */
     collectBottle(bottle) {
         if (this.collectedBottles < this.maxBottles) {
-            console.log('Collected a bottle!');
             bottle.removeFromWorld();
             this.level.bottle = this.level.bottle.filter(b => !b.removed);
             this.collectedBottles++;
@@ -424,7 +430,6 @@ class World {
     Updates the display of available bottles after throwing one.
     */
     updateBottleStatus() {
-        console.log(this.collectedBottles);
         this.statusbar.setBottleCounter(this.collectedBottles * 20);
     }
 
@@ -457,7 +462,6 @@ class World {
     */
     winGame() {
         this.updateScore();
-        console.log('Game Over. Final Score:', this.score);
         document.getElementById('scoreDisplay').classList.remove("scoreOut");
         this.gameWin = true;
         if(!this.isMuted) {

@@ -37,6 +37,24 @@ function checkOrientation() {
     }
 }
 
+function checkDeviceOrientation() {
+    if (window.innerWidth < 720) {
+    if (window.innerHeight > window.innerWidth) {
+        document.getElementById('rotateDevice').style.display = 'flex';
+        document.getElementById('rotateDeviceGif').style.display = 'flex';
+    } else {
+        document.getElementById('rotateDevice').style.display = 'none';
+        document.getElementById('rotateDeviceGif').style.display = 'none';
+    }
+} else {
+    document.getElementById('rotateDevice').style.display = 'none';
+    document.getElementById('rotateDeviceGif').style.display = 'none';
+}
+}
+
+window.addEventListener('resize', checkDeviceOrientation);
+document.addEventListener('DOMContentLoaded', checkDeviceOrientation);
+
 
 
 window.addEventListener("keydown", (event) => {
@@ -87,86 +105,70 @@ function initMobileControls() {
     const jumpButton = document.getElementById('jump');
     const throwButton = document.getElementById('throw');
     const startButton = document.getElementById('startGame');
-    const muteButton = document.getElementById('muteGame');
 
     if (startButton) {
         startButton.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            keyboard.SPACE = world.startGame();
+            
+            if (world) {
+                world.reset();
+            }
+            world = new World(canvas, keyboard);
+            world.startGame();
         });
 
     }
 
-    if (muteButton) {
-        muteButton.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            world.toggleMute();
-        });
-    }
+    
 
     if (moveLeftButton) {
         moveLeftButton.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+            
             keyboard.LEFT = true;
         });
 
         moveLeftButton.addEventListener('touchend', (e) => {
-            e.preventDefault();
+            
             keyboard.LEFT = false;
         });
     }
 
     if (moveRightButton) {
         moveRightButton.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+           
             keyboard.RIGHT = true;
         });
 
         moveRightButton.addEventListener('touchend', (e) => {
-            e.preventDefault();
+           
             keyboard.RIGHT = false;
         });
     }
 
     if (jumpButton) {
         jumpButton.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+           
             keyboard.UP = true;
         });
 
         jumpButton.addEventListener('touchend', (e) => {
-            e.preventDefault();
+            
             keyboard.UP = false;
         });
     }
 
     if (throwButton) {
         throwButton.addEventListener('touchstart', (e) => {
-            e.preventDefault();
+            
             keyboard.THROW = true;
         });
 
         throwButton.addEventListener('touchend', (e) => {
-            e.preventDefault();
+            
             keyboard.THROW = false;
         });
     }
 
-    if(muteButton) {
-        
-        if(this.MUTE = true){
-            document.getElementById('muteGame').addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.MUTE = false;
-            });
-        }else {
-            document.getElementById('muteGame').addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.MUTE = true;
-            });
-        }
-        
-    }
+    
     
 }
 
