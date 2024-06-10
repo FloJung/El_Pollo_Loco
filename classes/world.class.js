@@ -14,6 +14,7 @@ class World {
     gameOver = false;
     gameWin = false;
     gameStarted = false;
+    isPlaying = false;
     score = 0; 
     isMuted = false;
     lastThrowTime = 0;
@@ -24,7 +25,8 @@ class World {
     collectBottleAudio = new Audio('audio/collect.mp3');
     winAudio = new Audio('audio/win.mp3');
     loseAudio = new Audio('audio/lose.mp3');
-    
+    gameAudio = new Audio('audio/gameSound.mp3');
+
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -33,20 +35,34 @@ class World {
         this.setWorld();
         this.drawStartScreen();
         this.updateScore();
+        this.music();
         this.winAudio.volume = 0.2;
+        this.gameAudio.volume = 0.1;
+        
     }
 
     /**
     Toggles the mute state of the game and updates the mute button text.
     */
     toggleMute() {
-        if(this.gameOver || this.gameWin) {
-            this.isMuted = this.isMuted;
-            this.mute.innerHTML = this.isMuted = 'Unmute';
-        } else if (!this.gameOver && !this.gameWin) {
-            this.isMuted = !this.isMuted;
-            this.mute.innerHTML = this.isMuted ? 'Unmute' : 'Mute';
-        }
+        this.isMuted = !this.isMuted;
+        this.mute.innerHTML = this.isMuted ? 'Unmute' : 'Mute';
+        
+    }
+
+    music() {
+        setInterval(() => {
+            if (this.gameStarted && !this.gameOver && !this.gameWin) {
+                if (!this.isMuted) {              
+                    this.gameAudio.play();
+                    console.log('BB')
+                } else {
+                    this.gameAudio.pause(); 
+                    console.log('SS') 
+                }
+            }
+        }, 500);
+        
     }
 
     /**
@@ -87,6 +103,7 @@ class World {
         this.score = 0;
         this.gameWin = false;
         this.mute.innerHTML = 'Mute';
+        this.gameAudio.currentTime = 0;
     }
 
     /**
@@ -95,6 +112,7 @@ class World {
     startGame() {
         if (!this.gameStarted) {
             this.gameStarted = true;
+            this.gameAudio.loop = true; 
             initLevel();
             this.level = level1;
             this.character = new Character();
@@ -111,6 +129,7 @@ class World {
             this.draw();
             this.run();
             document.getElementById('scoreDisplay').classList.add("scoreOut");
+            
         }
     }
 
@@ -154,7 +173,9 @@ class World {
     draw() {
         if (this.gameWin) {
             this.toggleMute();
-            this.winScoreSreen();
+            setTimeout(() => {
+                this.winScoreSreen();
+            }, 1000);
         } else if (this.gameOver) {
             this.drawEndScreen();
             this.toggleMute();
@@ -343,9 +364,7 @@ class World {
     */
     checkBottleCollisions() {
         if (this.gameWin || this.gameOver) return;
-    
         this.throwableObject.forEach((bottle) => {
-            // Kollision mit Bossen
             this.level.boss.forEach((boss) => {
                 if (bottle.isColliding(boss)) {
                     boss.takeDamage(20);
@@ -353,8 +372,6 @@ class World {
                     bottle.removeFromWorld();
                 }
             });
-    
-            // Kollision mit normalen Gegnern
             this.level.enemies.forEach((enemy) => {
                 if (bottle.isColliding(enemy)) {
                     enemy.takeDamage(100);
@@ -362,8 +379,6 @@ class World {
                 }
             });
         });
-    
-        // Filtert entfernte Wurfobjekte aus dem Array heraus
         this.throwableObject = this.throwableObject.filter(bottle => !bottle.removed);
     }
 
@@ -454,6 +469,7 @@ class World {
     */
     endGame() {
         this.gameOver = true;
+        this.gameAudio.pause(); 
         this.character = null;
     }
 
@@ -464,6 +480,7 @@ class World {
         this.updateScore();
         document.getElementById('scoreDisplay').classList.remove("scoreOut");
         this.gameWin = true;
+        this.gameAudio.pause(); 
         if(!this.isMuted) {
             this.winAudio.play();
         }

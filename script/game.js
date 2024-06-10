@@ -3,6 +3,9 @@ let world;
 let keyboard = new Keyboard();
 
 
+/**
+Initializes the game environment, setting up the canvas, the game world, and user interface controls.
+*/
 function init() {
     canvas = document.getElementById('canvas');
     world = new World(canvas, keyboard);
@@ -12,6 +15,9 @@ function init() {
     
 }
 
+/**
+Initializes the start button and defines its behavior when clicked, including resetting and starting the game.
+*/
 function initStartButton() {
     const startButton = document.getElementById('startGame');
     if (startButton) {
@@ -25,6 +31,10 @@ function initStartButton() {
         });
     }
 }
+
+/**
+Checks and adjusts the canvas size based on the device's orientation to optimize the display for landscape mode.
+*/
 function checkOrientation() {
     if (window.matchMedia("(orientation: landscape)").matches) {
         if (window.innerHeight < 480) {
@@ -37,6 +47,9 @@ function checkOrientation() {
     }
 }
 
+/**
+Checks the device orientation and displays orientation advice if necessary.
+*/
 function checkDeviceOrientation() {
     if (window.innerWidth < 720) {
     if (window.innerHeight > window.innerWidth) {
@@ -99,6 +112,10 @@ window.addEventListener("keyup", (event) => {
     }
 });
 
+
+/**
+Sets up touch controls for the game, linking HTML buttons to game actions.
+*/
 function initMobileControls() {
     const moveLeftButton = document.getElementById('moveLeft');
     const moveRightButton = document.getElementById('moveRight');

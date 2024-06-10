@@ -9,8 +9,7 @@ class Endboss extends MovableObject {
     originalX = 700 * 2.5;
     hadFirstContact = false;
 
-    walkAudio = new Audio('audio/walking.mp3');
-    wingsAudio = new Audio('audio/flappingWings.mp3');
+    
 
     IMAGES_ALERT = [
         'img/4_enemie_boss_chicken/2_alert/G5.png',
@@ -47,7 +46,8 @@ class Endboss extends MovableObject {
         'img/4_enemie_boss_chicken/5_dead/G26.png',
     ];
     
-
+    walkAudio = new Audio('audio/walking.mp3');
+    wingsAudio = new Audio('audio/flappingWings.mp3');
     constructor() {
         super();
         this.initEndboss();
