@@ -8,6 +8,7 @@ class SmallChicken extends Chicken {
         this.height = 60;
         this.width = 80;
         this.x = 900 + Math.random() * 800;
+        this.y = 355;
     }
 
     IMAGES_WALKING = [

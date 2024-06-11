@@ -27,18 +27,19 @@ class World {
     loseAudio = new Audio('audio/lose.mp3');
     gameAudio = new Audio('audio/gameSound.mp3');
 
-
-    constructor(canvas, keyboard) {
+    constructor(canvas, keyboard, isMuted = false) {
+        this.isMuted = isMuted;
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.collisions = new Collisions(this);
         this.setWorld();
         this.drawStartScreen();
         this.updateScore();
-        this.music();
-        this.winAudio.volume = 0.2;
-        this.gameAudio.volume = 0.1;
-        
+        this.winAudio.volume = 0.4;
+        this.gameAudio.volume = 0.3;
+        this.gameAudio.loop = true; 
+        this.gameAudio.currentTime = 0;
     }
 
     /**
@@ -47,21 +48,31 @@ class World {
     toggleMute() {
         this.isMuted = !this.isMuted;
         this.mute.innerHTML = this.isMuted ? 'Unmute' : 'Mute';
-        
+        if(this.isMuted) {
+            this.gameAudio.pause();
+        } else {
+            this.gameAudio.play();
+        }
     }
-
+    
     /**
     Manages the playback of game background music based on the game's current state and sound settings.
-    If the game is over, won, or sounds are muted, it pauses the music.
     */
     music() {
         setInterval(() => {
             if (this.gameStarted && !this.gameOver && !this.gameWin) {
                 if (!this.isMuted) {              
-                    this.gameAudio.play();
+                    if (!this.gameAudio.isPlaying) {
+                        this.gameAudio.play();
+                        this.gameAudio.isPlaying = true;
+                    }
                 } else {
-                    this.gameAudio.pause(); 
+                    this.gameAudio.pause();
+                    this.gameAudio.isPlaying = false;
                 }
+            } else {
+                this.gameAudio.pause();
+                this.gameAudio.isPlaying = false;
             }
         }, 500); 
     }
@@ -103,24 +114,22 @@ class World {
         this.camera_x = 0;
         this.score = 0;
         this.gameWin = false;
-        this.mute.innerHTML = 'Mute';
         this.gameAudio.currentTime = 0;
     }
-
+    
     /**
     Starts the game, initializing levels, setting up characters, and beginning the game loop.
     */
     startGame() {
         if (!this.gameStarted) {
             this.gameStarted = true;
-            this.gameAudio.loop = true; 
+            this.music(); // Immer die Musik-Funktion aufrufen
             initLevel();
             this.level = level1;
             this.character = new Character();
             this.level.enemies.forEach(enemy => {
-                if (enemy instanceof Chicken) {
-                    enemy.world = this;
-                }});
+                enemy.world = this;
+            });
             this.level.boss.forEach(boss => {
                 if (boss instanceof Endboss) {
                     boss.world = this;
@@ -130,10 +139,11 @@ class World {
             this.draw();
             this.run();
             document.getElementById('scoreDisplay').classList.add("scoreOut");
-            
+            // Stellen Sie sicher, dass der Mute-Status im Button korrekt angezeigt wird
+            this.mute.innerHTML = this.isMuted ? 'Unmute' : 'Mute';
         }
     }
-
+    
     /**
     Draws the end screen upon game completion.
     */
@@ -146,6 +156,7 @@ class World {
     Draws the reset screen, offering options to restart or adjust game settings.
     */
     drawRESETScreen() {
+        
         document.getElementById('scoreDisplay').classList.remove("scoreOut");
         document.getElementById('startGame').classList.remove("scoreOut");
         this.gameOverlay.loadImage(this.gameOverlay.IMAGE_RESET[0]);
@@ -158,6 +169,7 @@ class World {
     clearCanvas() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.drawRESETScreen();
+        
     }
 
     /**
@@ -173,13 +185,11 @@ class World {
     */
     draw() {
         if (this.gameWin) {
-            this.toggleMute();
             setTimeout(() => {
                 this.winScoreSreen();
             }, 1000);
         } else if (this.gameOver) {
             this.drawEndScreen();
-            this.toggleMute();
             setTimeout(() => {
                 this.clearCanvas();
             }, 2000);
@@ -266,66 +276,10 @@ class World {
         this.runInterval = setInterval(() => {
             if (this.gameStarted && !this.gameOver && !this.gameWin) {
                 this.checkThrowObjects();
-                this.checkCollisions();
-                this.checkBottleCollisions();
+                this.collisions.checkCollisions(); // Nutze die neue Kollisionsklasse
                 this.checkForGameOverCondition();
             }
         }, 160);
-    }
-
-    checkCollisions() {
-        if (this.gameWin || this.gameOver) return;
-        this.filterRemovedEnemies();
-        this.handleEnemyCollisions();
-        this.handleBossCollisions();
-        this.handleBottleCollisions();
-        this.handleCoinCollisions();
-        this.checkBottleCollisions();
-    }
-    
-    /**
-    Filters out and removes defeated or inactive enemies from the game.
-    */
-    filterRemovedEnemies() {
-        this.level.enemies = this.level.enemies.filter(enemy => {
-            const isRemoved = enemy.removed;
-            return !isRemoved;
-        });
-    }
-    
-    /**
-    Handles collisions between the player character and enemies, processing damage and game responses.
-    */
-    handleEnemyCollisions() {
-        this.level.enemies.forEach(enemy => {
-            if (enemy.isAlive()) {
-                if (this.character.isLandingOnTop(enemy)) {
-                    enemy.takeDamage(100);
-                    this.score += 50;
-                    this.updateScore();
-                } else if (this.character.isColliding(enemy)) {
-                    this.characterTakeDamage();
-                }
-            }
-        });
-    }
-
-    /**
-    Processes interactions and collisions with the game's boss characters.
-    */
-    handleBossCollisions() {
-        this.level.boss.forEach(boss => {
-            if (boss.isAlive()) {
-                if (this.character.isColliding(boss)) {
-                    this.characterTakeDamage();}
-            } else if (this.score < 500) {
-                setTimeout(() => {
-                    this.updateScore();
-                    this.score += 500;
-                    this.winGame();
-                }, 500);
-            }
-        });
     }
 
     /**
@@ -336,51 +290,6 @@ class World {
             this.character.hit();
             this.statusbar.setPercentage(this.character.energy);
         }
-    }
-
-    /**
-    Processes collisions with collectible bottles, adding them to the player's inventory.
-    */
-    handleBottleCollisions() {
-        this.level.bottle.forEach(bottle => {
-            if (this.character.isColliding(bottle)) {
-                this.collectBottle(bottle);
-            }
-        });
-    }
-
-    /**
-    Processes collisions with coins, increasing the player's score.
-    */
-    handleCoinCollisions() {
-        this.level.coin.forEach(coin => {
-            if (this.character.isColliding(coin)) {
-                this.collectCoin(coin);
-            }
-        });
-    }
-    
-    /**
-    Checks for and handles collisions between throwable objects and enemies or bosses.
-    */
-    checkBottleCollisions() {
-        if (this.gameWin || this.gameOver) return;
-        this.throwableObject.forEach((bottle) => {
-            this.level.boss.forEach((boss) => {
-                if (bottle.isColliding(boss)) {
-                    boss.takeDamage(20);
-                    this.statusbar.setBossCounter(boss.energy);
-                    bottle.removeFromWorld();
-                }
-            });
-            this.level.enemies.forEach((enemy) => {
-                if (bottle.isColliding(enemy)) {
-                    enemy.takeDamage(100);
-                    bottle.removeFromWorld();
-                }
-            });
-        });
-        this.throwableObject = this.throwableObject.filter(bottle => !bottle.removed);
     }
 
     /**
@@ -425,7 +334,6 @@ class World {
     
     /**
     Checks if throwing an object is currently allowed based on game rules and timing.
-    @returns {boolean} True if the player can throw an object, false otherwise.
     */
     isThrowAllowed() {
         let currentTime = Date.now();

@@ -6,6 +6,9 @@ class Character extends MovableObject {
     invulnerable = false;
     lastMoveTime = 0;
     longIdleThreshold = 5000;
+    isLongIdleActive = false; 
+    facingRight = true;
+    
 
     world;
     walkingAudio = new Audio('audio/walking.mp3');
@@ -68,9 +71,6 @@ class Character extends MovableObject {
         'img/2_character_pepe/1_idle/long_idle/I-14.png',
         'img/2_character_pepe/1_idle/long_idle/I-15.png',
         'img/2_character_pepe/1_idle/long_idle/I-16.png',
-        'img/2_character_pepe/1_idle/long_idle/I-17.png',
-        'img/2_character_pepe/1_idle/long_idle/I-18.png',
-        'img/2_character_pepe/1_idle/long_idle/I-19.png',
         'img/2_character_pepe/1_idle/long_idle/I-20.png',
     ];
 
@@ -133,8 +133,9 @@ class Character extends MovableObject {
         if (this.x < this.world.level.levelEnd_x) {
             this.otherDirection = false;
             this.moveRight();
+            this.facingRight = true; // Richtung aktualisieren
             this.playAudioIfNotMuted(this.walkingAudio);
-            this.resetIdleTimer(); 
+            this.resetIdleTimer();
         }
     }
 
@@ -145,6 +146,7 @@ class Character extends MovableObject {
         if (this.x > 0) {
             this.otherDirection = true;
             this.moveLeft();
+            this.facingRight = false; // Richtung aktualisieren
             this.playAudioIfNotMuted(this.walkingAudio);
             this.resetIdleTimer();
         }

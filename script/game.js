@@ -1,18 +1,20 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
-
+let globalMuteStatus = false;
 
 /**
 Initializes the game environment, setting up the canvas, the game world, and user interface controls.
 */
 function init() {
     canvas = document.getElementById('canvas');
+    if (world) {
+        world.reset();
+    }
     world = new World(canvas, keyboard);
+    world.isMuted = globalMuteStatus; // Mute-Status wiederherstellen
     initMobileControls();
-    initStartButton(); 
-    
-    
+    initStartButton();
 }
 
 /**
@@ -20,16 +22,15 @@ Initializes the start button and defines its behavior when clicked, including re
 */
 function initStartButton() {
     const startButton = document.getElementById('startGame');
-    if (startButton) {
-        startButton.addEventListener('click', () => {
-            if (world) {
-                world.reset();
-            }
-            world = new World(canvas, keyboard);
-            world.startGame();
-             
-        });
-    }
+    startButton.addEventListener('click', () => {
+        globalMuteStatus = world.isMuted; // Mute-Status speichern
+        if (world) {
+            world.reset();
+        }
+        world = new World(canvas, keyboard);
+        world.isMuted = globalMuteStatus; // Mute-Status wiederherstellen
+        world.startGame();
+    });
 }
 
 /**
