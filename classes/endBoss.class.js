@@ -103,6 +103,7 @@ class Endboss extends MovableObject {
     Moves the Endboss forward randomly within a defined range.
     */
     moveForward() {
+        if (this.isDying) return;
         const { targetX, originalY, peakY } = this.initializeJump();
         this.performJump(targetX, originalY, peakY);
     }
@@ -129,6 +130,7 @@ class Endboss extends MovableObject {
     @param {number} peakY - The highest y-coordinate the character should reach during the jump.
     */
     performJump(targetX, originalY, peakY) {
+        if (this.isDying) return;
         const movePerFrame = 20;
         let goingUp = true;
         const attackMoveInterval = setInterval(() => {
@@ -206,6 +208,7 @@ class Endboss extends MovableObject {
     Executes the movement to the right during the move interval and manages animation and audio.
     */
     executeMoveRight() {
+        if (this.isDying) return;
         if (this.x < this.originalX) {
             this.x += this.speed;
             this.playAnimation(this.IMAGES_WALK);
@@ -248,6 +251,7 @@ class Endboss extends MovableObject {
     Initiates the hurt animation sequence by calculating animation parameters and starting the animation.
     */
     playHurtAnimation() {
+        if (this.isDying) return;
         const { frameInterval, animationInterval } = this.initializeHurtAnimation();
         this.performHurtAnimation(frameInterval, animationInterval);
     }
@@ -257,6 +261,7 @@ class Endboss extends MovableObject {
     @returns {{frameInterval: number, animationInterval: number}} An object containing the frame interval and an initially null reference for the animation interval.
     */
     initializeHurtAnimation() {
+        if (this.isDying) return;
         const hurtAnimationLength = 1000;  // Dauer der Hurt-Animation in ms
         const frameInterval = hurtAnimationLength / this.IMAGES_HURT.length;  // Interval zwischen Frames
         return { frameInterval, animationInterval: null };
@@ -281,6 +286,7 @@ class Endboss extends MovableObject {
     @param {number} animationInterval - The interval ID used to clear the interval once the animation is complete.
     */
     animateHurtFrame(index, animationInterval) {
+        if (this.isDying) return;
         if (index < this.IMAGES_HURT.length) {
             this.playHurtSound();
             this.loadImage(this.IMAGES_HURT[index]);
@@ -367,6 +373,7 @@ class Endboss extends MovableObject {
     }
 
     die() {
+        this.isDying = true;
         this.stopActivities();
         this.playDeathAnimation();
     }
@@ -396,7 +403,7 @@ class Endboss extends MovableObject {
                     this.removeFromWorld();
                 }, 1500);
             } else {
-                if(!world.isMuted) {
+                if(!this.world.isMuted) {
                     this.bossHurtAudio.play();
                 }
                 this.loadImage(this.IMAGES_DEAD[index]);

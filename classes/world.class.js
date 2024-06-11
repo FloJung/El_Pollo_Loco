@@ -26,6 +26,8 @@ class World {
     winAudio = new Audio('audio/win.mp3');
     loseAudio = new Audio('audio/lose.mp3');
     gameAudio = new Audio('audio/gameSound.mp3');
+    nopeAudio = new Audio('audio/nope.mp3');
+
 
     constructor(canvas, keyboard, isMuted = false) {
         this.isMuted = isMuted;
@@ -38,6 +40,7 @@ class World {
         this.updateScore();
         this.winAudio.volume = 0.4;
         this.gameAudio.volume = 0.3;
+        this.nopeAudio.volume = 0.3;
         this.gameAudio.loop = true; 
         this.gameAudio.currentTime = 0;
     }
@@ -65,6 +68,8 @@ class World {
                     if (!this.gameAudio.isPlaying) {
                         this.gameAudio.play();
                         this.gameAudio.isPlaying = true;
+                    }else if (this.gameOver || this.gameWin) {
+                        this.gameAudio.pause();
                     }
                 } else {
                     this.gameAudio.pause();
@@ -187,7 +192,7 @@ class World {
         if (this.gameWin) {
             setTimeout(() => {
                 this.winScoreSreen();
-            }, 1000);
+            }, 1500);
         } else if (this.gameOver) {
             this.drawEndScreen();
             setTimeout(() => {
@@ -305,6 +310,8 @@ class World {
             this.statusbar.increaseBottles();
             if(!this.isMuted) {
                 this.collectBottleAudio.play();
+            }else if (this.gameOver || this.gameWin) {
+                this.collectBottleAudio.pause();
             }
         }
     }
@@ -321,35 +328,84 @@ class World {
         this.updateScore();
         if(!this.isMuted) {
             this.coinAudio.play();
-        } 
+        } else if (this.gameOver || this.gameWin) {
+            this.coinAudio.pause();
+        }
     }
 
     checkThrowObjects() {
         if (this.gameWin || this.gameOver) return;
+        console.log(this.isThrowAllowed());
         if (this.isThrowAllowed()) {
+            
             this.createAndThrowObject();
             this.updateBottleStatus();
             this.playThrowSound();
+         } else {
+            this.playNopeSound();
          }
     }
     
     /**
     Checks if throwing an object is currently allowed based on game rules and timing.
     */
-    isThrowAllowed() {
+    // isThrowAllowed() {
+    //     let currentTime = Date.now();
+    //     return this.keyboard.THROW && this.collectedBottles > 0 && currentTime - this.lastThrowTime >= 400;
+    // }
+
+    // /**
+    // Creates a new throwable object and adds it to the game world.
+    // */
+    // createAndThrowObject() {
+    //     this.lastThrowTime = Date.now();
+    //     let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
+    //     this.throwableObject.push(bottle);
+    //     this.collectedBottles--;
+    // }
+
+
+    playNopeSound() {
         let currentTime = Date.now();
-        return this.keyboard.THROW && this.collectedBottles > 0 && currentTime - this.lastThrowTime >= 400;
+        if (this.keyboard.THROW && currentTime - this.lastThrowTime >= 400) {
+            if (!this.isMuted) {
+                    this.nopeAudio.play();
+            } else if (this.gameOver || this.gameWin) {
+                this.nopeAudio.pause();
+            }
+        }
     }
 
-    /**
-    Creates a new throwable object and adds it to the game world.
-    */
-    createAndThrowObject() {
+
+ /**
+     * Checks if throwing an object is currently allowed based on game rules, timing, and facing direction.
+     * @returns {boolean} True if the player can throw an object, false otherwise.
+     */
+ isThrowAllowed() {
+    let currentTime = Date.now();
+    
+   
+    // Füge eine Bedingung hinzu, um sicherzustellen, dass der Character nach rechts schaut
+    return this.keyboard.THROW && this.collectedBottles > 0 && currentTime - this.lastThrowTime >= 400 && this.character.facingRight;
+}
+
+/**
+ * Creates a new throwable object and adds it to the game world.
+ */
+createAndThrowObject() {
+    if (this.isThrowAllowed()) {
         this.lastThrowTime = Date.now();
-        let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
+        let bottle = new ThrowableObject(this.character.x + 60, this.character.y + 20);
         this.throwableObject.push(bottle);
         this.collectedBottles--;
+        this.playThrowSound();
     }
+}
+
+
+
+
+
 
     /**
     Updates the display of available bottles after throwing one.
@@ -364,6 +420,8 @@ class World {
     playThrowSound() {
         if (!this.isMuted) {
             this.throwAudio.play();
+        } else if (this.gameOver || this.gameWin) {
+            this.throwAudio.pause();
         }
     }
 
@@ -393,6 +451,8 @@ class World {
         this.gameAudio.pause(); 
         if(!this.isMuted) {
             this.winAudio.play();
+        }else if (this.gameOver || this.gameWin) {
+            this.winAudio.pause();
         }
         this.character = null;
     }
@@ -403,7 +463,9 @@ class World {
     checkForGameOverCondition() {
         if (this.level.bottle.length === 0 && this.collectedBottles === 0) {
             setTimeout(() => {
-                    this.character.die();
+                this.gameOver = true;
+                this.gameAudio.pause(); 
+                this.character = null;
             }, 2000);  
         }
     }

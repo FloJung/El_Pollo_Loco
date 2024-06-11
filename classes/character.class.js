@@ -85,6 +85,7 @@ class Character extends MovableObject {
         this.applyGravity();
         this.initAnimation();
         this.resetIdleTimer();
+        this.facingRight = true;
     }
 
     resetIdleTimer() {
@@ -120,7 +121,7 @@ class Character extends MovableObject {
         if (this.world.keyboard.LEFT) {
             this.moveLeftAndPlayAudio();
         }
-        if (this.world.keyboard.UP && this.y === 240) { // Geändert, um sicherzustellen, dass UP korrekt behandelt wird
+        if (this.world.keyboard.UP && this.y === 240) {
             this.jumpAndPlayAudio();
         }
     }
