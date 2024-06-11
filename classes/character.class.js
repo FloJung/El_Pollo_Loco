@@ -167,7 +167,7 @@ class Character extends MovableObject {
     @param {Audio} audio - The audio file to play.
      */
     playAudioIfNotMuted(audio) {
-        if (!this.world.isMuted) {
+        if (this.world.isGameActiveAndNotMuted()) {
             audio.play();
         }
     }

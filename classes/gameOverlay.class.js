@@ -8,9 +8,7 @@ class GameOverlay extends DrawableObject {
         'img/9_intro_outro_screens/game_over/game over.png',
     ];
     IMAGE_RESET = [
-        'img/5_background/first_half_background.png',
-        'img/5_background/first_half_background.png',
-        'img/5_background/first_half_background.png',
+        'img/5_background/second_half_background.png',
     ];
 
     constructor() {

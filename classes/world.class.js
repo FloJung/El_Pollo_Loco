@@ -83,6 +83,14 @@ class World {
     }
 
     /**
+    Checks if the game is still active and not muted.
+    @returns {boolean} True if the game is active and not muted, false otherwise.
+    */
+    isGameActiveAndNotMuted() {
+        return this.gameStarted && !this.gameOver && !this.gameWin && !this.isMuted;
+    }
+
+    /**
     Sets references to the world object for characters and game overlays to ensure they can interact with the game environment.
     */
     setWorld() {
@@ -161,11 +169,11 @@ class World {
     Draws the reset screen, offering options to restart or adjust game settings.
     */
     drawRESETScreen() {
-        
+        this.gameOverlay.loadImage(this.gameOverlay.IMAGE_RESET);
+        this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
         document.getElementById('scoreDisplay').classList.remove("scoreOut");
         document.getElementById('startGame').classList.remove("scoreOut");
-        this.gameOverlay.loadImage(this.gameOverlay.IMAGE_RESET[0]);
-        this.ctx.drawImage(this.gameOverlay.img, 0, 0, this.canvas.width, this.canvas.height);
+        
     }
 
     /**
@@ -173,7 +181,7 @@ class World {
     */
     clearCanvas() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        // this.drawRESETScreen();
+        this.drawRESETScreen();
         
     }
 
@@ -197,8 +205,8 @@ class World {
             this.drawEndScreen();
             setTimeout(() => {
                 this.clearCanvas();
-                this.drawRESETScreen();
             }, 2000);
+            
         } else if (!this.gameStarted) {
             this.drawStartScreen();
         } else {
@@ -310,8 +318,6 @@ class World {
             this.statusbar.increaseBottles();
             if(!this.isMuted) {
                 this.collectBottleAudio.play();
-            }else if (this.gameOver || this.gameWin) {
-                this.collectBottleAudio.pause();
             }
         }
     }
@@ -335,9 +341,7 @@ class World {
 
     checkThrowObjects() {
         if (this.gameWin || this.gameOver) return;
-        console.log(this.isThrowAllowed());
         if (this.isThrowAllowed()) {
-            
             this.createAndThrowObject();
             this.updateBottleStatus();
             this.playThrowSound();
@@ -345,33 +349,12 @@ class World {
             this.playNopeSound();
          }
     }
-    
-    /**
-    Checks if throwing an object is currently allowed based on game rules and timing.
-    */
-    // isThrowAllowed() {
-    //     let currentTime = Date.now();
-    //     return this.keyboard.THROW && this.collectedBottles > 0 && currentTime - this.lastThrowTime >= 400;
-    // }
-
-    // /**
-    // Creates a new throwable object and adds it to the game world.
-    // */
-    // createAndThrowObject() {
-    //     this.lastThrowTime = Date.now();
-    //     let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50);
-    //     this.throwableObject.push(bottle);
-    //     this.collectedBottles--;
-    // }
-
 
     playNopeSound() {
         let currentTime = Date.now();
         if (this.keyboard.THROW && currentTime - this.lastThrowTime >= 400) {
             if (!this.isMuted) {
                     this.nopeAudio.play();
-            } else if (this.gameOver || this.gameWin) {
-                this.nopeAudio.pause();
             }
         }
     }
@@ -420,9 +403,7 @@ createAndThrowObject() {
     playThrowSound() {
         if (!this.isMuted) {
             this.throwAudio.play();
-        } else if (this.gameOver || this.gameWin) {
-            this.throwAudio.pause();
-        }
+        } 
     }
 
     /**
@@ -451,8 +432,6 @@ createAndThrowObject() {
         this.gameAudio.pause(); 
         if(!this.isMuted) {
             this.winAudio.play();
-        }else if (this.gameOver || this.gameWin) {
-            this.winAudio.pause();
         }
         this.character = null;
     }

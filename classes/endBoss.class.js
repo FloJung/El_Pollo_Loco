@@ -225,7 +225,7 @@ class Endboss extends MovableObject {
     manageWalkAudio() {
         if (this.walkAudio.paused) {
             this.walkAudio.loop = true;
-            if(!world.isMuted) {
+            if(this.world.isGameActiveAndNotMuted()) {
                 this.walkAudio.play();
             }
         }
@@ -299,7 +299,7 @@ class Endboss extends MovableObject {
     Plays the hurt sound effect, unless the game is muted.
     */
     playHurtSound() {
-        if (!this.world.isMuted) {
+        if (this.world.isGameActiveAndNotMuted()) {
             this.bossHurtAudio.play();
         }
     }
@@ -322,7 +322,7 @@ class Endboss extends MovableObject {
         if (this.hadFirstContact && !this.isAttacking && !this.isMovingBack && !this.isDying) {
             this.isAttacking = true;
             setTimeout(() => {
-                if(!world.isMuted) {
+                if(this.world.isGameActiveAndNotMuted()) {
                     this.wingsAudio.play(); 
                 }
             }, 1200);
@@ -403,7 +403,7 @@ class Endboss extends MovableObject {
                     this.removeFromWorld();
                 }, 1500);
             } else {
-                if(!this.world.isMuted) {
+                if(this.world.isGameActiveAndNotMuted()) {
                     this.bossHurtAudio.play();
                 }
                 this.loadImage(this.IMAGES_DEAD[index]);
