@@ -168,7 +168,7 @@ class World {
     */
     clearCanvas() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.drawRESETScreen();
+        // this.drawRESETScreen();
         
     }
 
@@ -192,6 +192,7 @@ class World {
             this.drawEndScreen();
             setTimeout(() => {
                 this.clearCanvas();
+                this.drawRESETScreen();
             }, 2000);
         } else if (!this.gameStarted) {
             this.drawStartScreen();
